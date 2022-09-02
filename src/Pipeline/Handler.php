@@ -11,8 +11,9 @@ abstract class Handler {
 		return [static::class, array_combine($argumentNames, $arguments)];
 	}
 	protected function getContext(string|null $key = null): mixed { return $this->pipeline->getContext($key); }
-	protected function setContext(string $key, mixed $value): void { $this->pipeline->getContext($key, $value); }
+	protected function setContext(string $key, mixed $value): void { $this->pipeline->setContext($key, $value); }
 	protected function next() { return $this->pipeline->next(); }
 	protected function break() { $this->pipeline->break(); }
 	protected function isLast(): bool { return $this->isLastHandler; }
+	abstract public function handle();
 }

@@ -1,7 +1,11 @@
 <?php
 include "vendor/autoload.php";
 
-use Atomino2\Pipeline\Context;
+use Atomino2\Pipeline\Attributes\Context;
+use Atomino2\Pipeline\Attributes\Argument;
+use Atomino2\Pipeline\Exceptions\EndOfPipelineException;
+use Atomino2\Pipeline\Handler;
+use Atomino2\Pipeline\PipelineRunner;
 use DI\ContainerBuilder;
 
 $builder = new ContainerBuilder();
@@ -10,25 +14,29 @@ $builder->addDefinitions([
 ]);
 $di = $builder->build();
 
-class MyHandler extends \Atomino2\Pipeline\Handler {
+class MyHandler extends Handler {
+	#[Argument] private string $message;
+
 	public static function setup(string $message) { return self::make(func_get_args()); }
-	public function handle(string $message = "") {
-		echo "MyHandler running <" . $message . ">\n";
+	public function handle() {
+		echo "MyHandler running <" . $this->message . ">\n";
 		if (!$this->isLast()) return $this->next() . "!!!";
 		else return ".";
 	}
 }
 
-class MyHandler2 extends \Atomino2\Pipeline\Handler {
-	#[Context] private string $a = "";
+class MyHandler2 extends Handler {
+	#[Context] private string $a;
 	#[Context] private string $contextNotExists = "initialvalue";
+	#[Argument] private string $message;
+
 	public static function setup(string $message) { return self::make(func_get_args()); }
-	public function handle(string $message = "HELLOKA!") {
-		echo "MyHandler2 running <" . $message . ">\n";
-		if ($message === "x") $this->break();
+	public function handle() {
+		echo "MyHandler2 running <" . $this->message . ">\n";
+		if ($this->message === "x") $this->break();
 		try {
 			$result = $this->next();
-		} catch (\Atomino2\Pipeline\Exceptions\EndOfPipelineException $e) {
+		} catch (EndOfPipelineException $e) {
 			$result = '...';
 		}
 		echo "Context  <" . $this->a . ">\n";
@@ -37,12 +45,12 @@ class MyHandler2 extends \Atomino2\Pipeline\Handler {
 	}
 }
 
-$pipeline = $di->make(\Atomino2\Pipeline\PipelineRunner::class);
+$pipeline = $di->make(PipelineRunner::class);
 
 echo $pipeline
 	->add($pipeline()->pipe(MyHandler::setup("hello1"))->pipe(MyHandler2::setup("x")))
-	->add($pipeline()->pipe(MyHandler::setup("hello2"))->pipe(MyHandler2::class))
+	->add($pipeline()->pipe(MyHandler::setup("hello2"))->pipe(MyHandler2::setup("xxxx")))
 	->exec(["a" => 24])
 ;
 
-echo $pipeline()->pipe(MyHandler::setup("STANADLONEPIPELINE"))->pipe(MyHandler2::setup("xxx"))->exec();
+echo $pipeline()->pipe(MyHandler::setup("STANADLONEPIPELINE"))->pipe(MyHandler2::setup("xxx"))->exec(["a"=>1]);

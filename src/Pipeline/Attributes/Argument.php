@@ -1,9 +1,7 @@
-<?php
-
-namespace Atomino2\Pipeline;
+<?php namespace Atomino2\Pipeline\Attributes;
 
 #[\Attribute(\Attribute::TARGET_PROPERTY)]
-class Context {
+class Argument {
 	public function __construct(public string|null $name = null) { }
 	public static function all(\ReflectionClass|string $reflection): array {
 		if (is_string($reflection)) $reflection = new \ReflectionClass($reflection);
