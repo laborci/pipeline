@@ -1,0 +1,17 @@
+{
+    "name": "elvis/atomino2",
+    "autoload": {
+        "psr-4": {
+            "Atomino\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Gergely Laborci",
+            "email": "gergely@laborci.hu"
+        }
+    ],
+    "require": {
+        "php-di/php-di": "^6.4"
+    }
+}
