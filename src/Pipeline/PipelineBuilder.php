@@ -1,11 +1,11 @@
 <?php namespace Atomino2\Pipeline;
 
-use Atomino2\DIContainerInterface;
+use DI\Container;
 
 class PipelineBuilder {
 	private array $segments = [];
 
-	public function __construct(private DIContainerInterface $di, private array $context = []) { }
+	public function __construct(private Container $di) { }
 
 	public function pipe(string|array|Handler $handler, array $arguments = []): static {
 		if (is_array($handler)) [$handler, $arguments] = $handler;
@@ -19,7 +19,6 @@ class PipelineBuilder {
 	 * @throws \DI\NotFoundException
 	 */
 	public function exec(array $context = []) {
-		$context = array_merge($this->context, $context);
 		/**
 		 * @var Pipeline $pipeline
 		 */

@@ -1,13 +1,10 @@
 <?php namespace Atomino2\Pipeline;
 
-
-use Atomino2\DIContainerInterface;
-use Atomino2\Pipeline\Attributes\Argument;
-use Atomino2\Pipeline\Attributes\Context;
 use Atomino2\Pipeline\Exceptions\EndOfPipelineException;
+use DI\Container;
 
 class Pipeline {
-	public function __construct(private readonly DIContainerInterface $di, private array $context, private array $segments) { }
+	public function __construct(private readonly Container $di, private array $context, private array $segments) { }
 
 	/**
 	 * @throws \DI\NotFoundException
@@ -20,7 +17,7 @@ class Pipeline {
 		$segment = array_shift($this->segments);
 		[$handler, $arguments] = $segment;
 		$handler = $this->makeHandler($handler, $arguments, count($this->segments) === 0);
-		return $this->runHandler($handler, $arguments);
+		return $this->runHandler($handler, $arguments, $this->context);
 	}
 
 	public function break() { throw new Exceptions\BreakException(); }
@@ -44,37 +41,22 @@ class Pipeline {
 		/* Inject isLastHandler*/
 		if ($lastHandler) \Closure::bind(fn($property, $value) => $this->$property = $value, $handler, Handler::class)("isLastHandler", $lastHandler);
 
-		$reflection = new \ReflectionClass($handler);
-
-		/* Inject Context properties*/
-		$attrs = Context::all($reflection);
-		foreach ($attrs as $property => $attr) {
-			$name = is_null($attr->name) ? $property : $attr->name;
-			if (array_key_exists($name, $this->context)) {
-				\Closure::bind(fn($property, $value) => $this->$property = $value, $handler, $handler)($property, $this->context[$name]);
-			}
-		}
-
-		/* Inject Argument properties*/
-		$attrs = Argument::all($reflection);
-		foreach ($attrs as $property => $attr) {
-			$name = is_null($attr->name) ? $property : $attr->name;
-			if (array_key_exists($name, $arguments)) {
-				\Closure::bind(fn($property, $value) => $this->$property = $value, $handler, $handler)($property, $arguments[$name]);
-			}
-		}
 		return $handler;
 	}
 
 	/**
 	 * @throws \ReflectionException
 	 */
-	private function runHandler(Handler $handler, array $arguments) {
+	private function runHandler(Handler $handler, array $arguments, array $context) {
 		$handlerFunc = (new \ReflectionMethod($handler, "handle"));
-		$pass = [];
-		foreach ($handlerFunc->getParameters() as $param) {
-			if (isset($arguments[$param->getName()])) $pass[] = $arguments[$param->getName()];
-			else $pass[] = $param->getDefaultValue();
+		$pass = $arguments;
+		$parameters = $handlerFunc->getParameters();
+		for ($i = count($arguments); $i < count($parameters); $i++) {
+			$param = $parameters[$i];
+			$paramName = $param->getName();
+			if (isset($context[$paramName])) $pass[] = $context[$paramName];
+			elseif ($param->isDefaultValueAvailable()) $pass[] = $param->getDefaultValue();
+			else throw new \InvalidArgumentException("Missing context " . $paramName);
 		}
 		return $handlerFunc->invokeArgs($handler, $pass);
 	}

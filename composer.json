@@ -1,8 +1,9 @@
 {
-    "name": "elvis/atomino2",
+    "name": "atomino2/pipeline",
     "autoload": {
         "psr-4": {
-            "Atomino\\": "src/"
+            "Atomino2\\": "src/",
+            "App\\": "app/"
         }
     },
     "authors": [
@@ -12,6 +13,10 @@
         }
     ],
     "require": {
-        "php-di/php-di": "^6.4"
+        "php-di/php-di": "^6.4",
+        "atomino/util-dot-notation": "^1.0",
+        "symfony/dotenv": "^6.1",
+        "vlucas/phpdotenv": "^5.4",
+        "symfony/http-foundation": "^6.1"
     }
 }

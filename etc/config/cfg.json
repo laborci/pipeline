@@ -1,0 +1,9 @@
+{
+	"bla": "blabla",
+	"runtime@env": "RUNTIME",
+	"json": "value",
+	"json2": {
+		"subkey": "value"
+	},
+	"db-pass@v": "DBPASSWORD"
+}
