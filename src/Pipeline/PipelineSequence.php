@@ -1,11 +1,11 @@
 <?php namespace Atomino2\Pipeline;
 
-use Atomino2\Pipeline\Exceptions\PipelineRunnerDeflatedException;
+use Atomino2\Pipeline\Exceptions\PipelineSequenceDepletedException;
 use Atomino2\Pipeline\Exceptions\BreakException;
 use DI\DependencyException;
 use DI\NotFoundException;
 
-class PipelineRunner {
+class PipelineSequence {
 
 	/** @var PipelineBuilder[] */
 	private array $pipelineBuilders = [];
@@ -17,7 +17,7 @@ class PipelineRunner {
 
 	/**
 	 * @throws DependencyException
-	 * @throws PipelineRunnerDeflatedException
+	 * @throws PipelineSequenceDepletedException
 	 * @throws NotFoundException
 	 */
 	public function exec(array $context = []) {
@@ -33,6 +33,6 @@ class PipelineRunner {
 				// do nothing it just broke the current pipeline
 			}
 		}
-		throw new PipelineRunnerDeflatedException();
+		throw new PipelineSequenceDepletedException();
 	}
 }

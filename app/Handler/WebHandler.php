@@ -10,5 +10,4 @@ class WebHandler extends Handler {
 	public function handle(string $message) {
 		return new Response($message);
 	}
-
 }
