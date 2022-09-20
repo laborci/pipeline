@@ -46,7 +46,7 @@ class PatternProcessor {
 		if ($segment === '*') return '[^\\'.$separator.']+';
 		if ($segment === '**') return '.*?';
 		elseif (preg_match('/^:(?<optional>\??)(?<name>.*?)(\((?<pattern>.+?)\))?(=(?<default>.*))?$/', $segment, $matches)) {
-			$pattern = (array_key_exists('pattern', $matches) && strlen($matches['pattern'])) ? $matches['pattern'] : '[^/]+';
+			$pattern = (array_key_exists('pattern', $matches) && strlen($matches['pattern'])) ? $matches['pattern'] : '[^\\'.$separator.']+';
 			$name = (array_key_exists('name', $matches) && strlen($matches['name'])) ? $matches['name'] : null;
 			$optional = array_key_exists('optional', $matches) && strlen($matches['optional']);
 			$default = array_key_exists('default', $matches) && strlen($matches['default']) ? $matches["default"] : false;

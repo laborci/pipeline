@@ -25,8 +25,6 @@ class Route extends AbstractRequestHandler {
 		private readonly Matcher\SchemeMatcher $schemeMatcher,
 		private readonly Matcher\MethodMatcher $methodMatcher,
 		private readonly Matcher\HostMatcher   $hostMatcher,
-		private readonly AttributeBag|null     $pathBag = null,
-		private readonly AttributeBag|null     $hostBag = null,
 	) {
 	}
 
@@ -40,18 +38,16 @@ class Route extends AbstractRequestHandler {
 
 		$request =  $this->request->duplicate();
 
-		$pathBag = $this->pathBag ?: new ParameterBag();
-		$hostBag = $this->hostBag ?: new ParameterBag();
+		$pathArgs = $this->getContext("path-args");
+		$hostArgs = $this->getContext("host-args");
 
 		if (
-			($this->pathMatcher)($request, $path, $pathBag) &&
-			($this->hostMatcher)($request, $host, $hostBag) &&
+			($this->pathMatcher)($request, $path, $pathArgs) &&
+			($this->hostMatcher)($request, $host, $hostArgs) &&
 			($this->portMatcher)($request, $port) &&
 			($this->schemeMatcher)($request, $scheme) &&
 			($this->methodMatcher)($request, $method)
 		) {
-			$this->setContext("hostBag", $hostBag);
-			$this->setContext("pathBag", $pathBag);
 			$this->setContext("request", $request);
 			return $this->next();
 		}

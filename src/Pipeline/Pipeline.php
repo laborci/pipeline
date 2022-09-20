@@ -6,9 +6,10 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 class Pipeline {
 	public function __construct(
 		private PipelineFactoryInterface $pipelineFactory,
-		private ParameterBag $context,
-		private array $segments
-	) { }
+		private ParameterBag             $context,
+		private array                    $segments
+	) {
+	}
 
 	/**
 	 * @throws \DI\NotFoundException
@@ -30,6 +31,7 @@ class Pipeline {
 	}
 
 	public function break() { throw new Exceptions\BreakException(); }
+	public function getContextBag():ParameterBag { return $this->context; }
 	public function getContext(string|null $key = null) { return is_null($key) ? $this->context->all() : $this->context->get($key); }
 	public function setContext(string $key, mixed $value) { $this->context->set($key, $value); }
 

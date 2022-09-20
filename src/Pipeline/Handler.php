@@ -20,8 +20,10 @@ abstract class Handler {
 	protected function ctx(string $key): mixed { return $this->context->get($key); }
 	protected function arg(string $key) { return $this->arguments->get($key); }
 
+	protected function getContextBag(): ParameterBag { return $this->pipeline->getContextBag(); }
 	protected function getContext(string|null $key = null): mixed { return $this->pipeline->getContext($key); }
 	protected function setContext(string $key, mixed $value): void { $this->pipeline->setContext($key, $value); }
+
 	protected function next() { return $this->pipeline->next(); }
 	protected function break(): never { $this->pipeline->break(); }
 	protected function isLast(): bool { return $this->isLastHandler; }

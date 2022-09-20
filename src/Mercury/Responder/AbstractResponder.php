@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\Response;
 abstract class AbstractResponder extends AbstractRequestHandler {
 	public function run(): Response|null {
 		parent::run();
-		return $this->respond(new Response());
+		return $this->respond();
 	}
-	abstract protected function respond(Response $response): Response|null;
+	abstract protected function respond(): Response|null;
 }

@@ -22,9 +22,7 @@ class PipelineSequence {
 		return $this;
 	}
 
-	public function hasContext($key): bool { return $this->context->has($key); }
-
-	public function context(string|ParameterBag $key, $value): static {
+	public function context(string|ParameterBag $key, $value = null): static {
 		if (is_string($key)) $this->context->set($key, $value);
 		else $this->context->replace($key->all());
 		return $this;

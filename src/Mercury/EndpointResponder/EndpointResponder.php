@@ -3,12 +3,12 @@
 use Atomino2\Mercury\Responder\AbstractResponder;
 use Atomino2\Mercury\Router\Matcher\MethodMatcher;
 use Atomino2\Mercury\Router\Matcher\PathMatcher;
-use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Response;
 
 class EndpointResponder extends AbstractResponder {
 
-	protected function respond(Response $response): Response|null {
+	protected function respond(): Response|null {
+
 		$methodMatcher = new MethodMatcher();
 		$pathMatcher = new PathMatcher();
 
@@ -19,8 +19,10 @@ class EndpointResponder extends AbstractResponder {
 				$endpoint = $endpoints[0]->newInstance();
 				if (
 					$methodMatcher($this->request, $endpoint->methods) &&
-					$pathMatcher($this->request, $endpoint->route, $args = new ParameterBag())
-				) return $method->invoke($this, $args);
+					$pathMatcher($this->request, $endpoint->route, $this->pathArgsBag)
+				){
+					return $method->invoke($this);
+				}
 			}
 		}
 		$this->break();

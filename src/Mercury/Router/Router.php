@@ -5,6 +5,7 @@ use Atomino2\Pipeline\Handler;
 use Atomino2\Pipeline\PipelineBuilder;
 use Atomino2\Pipeline\PipelineFactoryInterface;
 use Atomino2\Pipeline\PipelineSequence;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 abstract class Router extends Handler {
 	private PipelineSequence $sequence;
@@ -15,12 +16,13 @@ abstract class Router extends Handler {
 
 	public function run() {
 		$this->route();
+		$context = $this->getContextBag();
 
-		$request = $this->ctx("request");
-		$originalRequest = $this->ctx("original-request") ?: $request;
+		if (!$context->has("original-request")) $context->set("original-request", $context->get("request"));
+		if (!$context->has("host-args")) $context->set("host-args", new ParameterBag());
+		if (!$context->has("path-args")) $context->set("path-args", new ParameterBag());
 
-		$this->sequence->context("original-request", $originalRequest);
-		$this->sequence->context("request", $request);
+		$this->sequence->context($context);
 
 		try {
 			return $this->sequence->exec();

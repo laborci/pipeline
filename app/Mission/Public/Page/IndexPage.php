@@ -7,7 +7,8 @@ class IndexPage extends AbstractResponder {
 
 	public static function setup(string $message): array { return parent::setup(get_defined_vars()); }
 
-	public function respond(Response $response): Response {
+	public function respond(): Response {
+		$response = new Response();
 		$response->setContent($this->arg("message"));
 		return $response;
 	}

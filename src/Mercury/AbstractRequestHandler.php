@@ -1,5 +1,6 @@
 <?php namespace Atomino2\Mercury;
 
+use Atomino2\Pipeline\Handler;
 use Symfony\Component\HttpFoundation\FileBag;
 use Symfony\Component\HttpFoundation\HeaderBag;
 use Symfony\Component\HttpFoundation\InputBag;
@@ -13,34 +14,52 @@ use Symfony\Component\HttpFoundation\ServerBag;
 /**
  * @method Response|null next()
  */
-abstract class AbstractRequestHandler extends \Atomino2\Pipeline\Handler {
-	protected ParameterBag $attributes;
-	protected ParameterBag $data;
-	protected FileBag $files;
-	protected InputBag $query;
-	protected InputBag $cookies;
-	protected HeaderBag $headers;
-	protected ServerBag $server;
+abstract class AbstractRequestHandler extends Handler {
+	protected ParameterBag $attributesBag;
+	protected ParameterBag $dataBag;
+	protected ParameterBag $pathArgsBag;
+	protected ParameterBag $hostArgsBag;
+	protected FileBag $filesBag;
+	protected InputBag $queryBag;
+	protected InputBag $cookiesBag;
+	protected HeaderBag $headersBag;
+	protected ServerBag $serverBag;
 	protected false|string|null $content;
-	protected InputBag|ParameterBag $post;
+	protected InputBag|ParameterBag $postBag;
 	protected Request $request;
 
+	public function getAttribute(string $key): mixed { return $this->attributesBag->get($key); }
+	public function getData(string $key): mixed { return $this->dataBag->get($key); }
+	public function getPathArg(string $key): mixed { return $this->pathArgsBag->get($key); }
+	public function getHostArg(string $key): mixed { return $this->hostArgsBag->get($key); }
+	public function getFile(string $key): mixed { return $this->filesBag->get($key); }
+	public function getQuery(string $key): mixed { return $this->queryBag->get($key); }
+	public function getCookie(string $key): mixed { return $this->cookiesBag->get($key); }
+	public function getHeader(string $key): mixed { return $this->headersBag->get($key); }
+	public function getServer(string $key): mixed { return $this->serverBag->get($key); }
+	public function getPost(string $key): mixed { return $this->postBag->get($key); }
+	public function getRequest(): Request { return $this->request; }
+	public function getContent(): false|string|null { return $this->content; }
+
 	public function run() {
+
 		/** @var Request $request */
 		$request = $this->ctx("request");
 		$this->request = $request;
-		$this->attributes = $request->attributes;
-		$this->files = $request->files;
-		$this->post = $request->request;
-		$this->query = $request->query;
-		$this->cookies = $request->cookies;
-		$this->headers = $request->headers;
-		$this->server = $request->server;
+		$this->attributesBag = $request->attributes;
+		$this->filesBag = $request->files;
+		$this->postBag = $request->request;
+		$this->queryBag = $request->query;
+		$this->cookiesBag = $request->cookies;
+		$this->headersBag = $request->headers;
+		$this->serverBag = $request->server;
 		$this->content = $request->getContent();
+		$this->pathArgsBag = $this->ctx("path-args") ?: new ParameterBag();
+		$this->hostArgsBag = $this->ctx("host-args") ?: new ParameterBag();
 		try {
-			$this->data = new ParameterBag($request->toArray());
+			$this->dataBag = new ParameterBag($request->toArray());
 		} catch (\Exception $e) {
-			$this->data = new ParameterBag();
+			$this->dataBag = new ParameterBag();
 		}
 	}
 
