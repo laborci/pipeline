@@ -1,6 +1,6 @@
 <?php namespace Atomino2\Config;
 
-use Atomino\Neutrons\DotNotation;
+use Atomino2\Util\DotNotation;
 use Atomino2\Config\FileFilter\ConfigFileFilterInterface;
 use Atomino2\Config\Reader\ConfigReaderInterface;
 use Atomino2\Config\ValueParser\ConfigValueParserInterface;

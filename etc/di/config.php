@@ -13,7 +13,6 @@ $loader->addReader("json", new JSONConfigReader());
 $loader->addReader("ini", new DotSeparatedINIConfigReader());
 $loader->addValueParser(new PathConfigValueParser(getenv("ROOT")));
 $loader->addValueParser(new EnvConfigValueParser());
-
 $loader->loadList(getenv("ROOT"), getenv("CONFIG"));
 
 return ["app-cfg" => $loader->getConfiguration()];

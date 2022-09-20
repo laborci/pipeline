@@ -17,6 +17,11 @@
         "atomino/util-dot-notation": "^1.0",
         "symfony/dotenv": "^6.1",
         "vlucas/phpdotenv": "^5.4",
-        "symfony/http-foundation": "^6.1"
-    }
+        "symfony/http-foundation": "^6.1",
+        "symfony/mime": "^6.1",
+        "codedungeon/php-cli-colors": "^1.12",
+        "psr/log": "^3.0",
+        "monolog/monolog": "^3.2",
+		"ext-curl": "*"
+	}
 }

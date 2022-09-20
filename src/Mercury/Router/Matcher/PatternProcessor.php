@@ -43,7 +43,8 @@ class PatternProcessor {
 	}
 
 	private function parseSegment(string $segment, string $separator) {
-		if ($segment === '*') return '[^/]+';
+		if ($segment === '*') return '[^\\'.$separator.']+';
+		if ($segment === '**') return '.*?';
 		elseif (preg_match('/^:(?<optional>\??)(?<name>.*?)(\((?<pattern>.+?)\))?(=(?<default>.*))?$/', $segment, $matches)) {
 			$pattern = (array_key_exists('pattern', $matches) && strlen($matches['pattern'])) ? $matches['pattern'] : '[^/]+';
 			$name = (array_key_exists('name', $matches) && strlen($matches['name'])) ? $matches['name'] : null;
@@ -61,12 +62,13 @@ class PatternProcessor {
 
 
 	public function match(string $subject): bool {
+
 		if (preg_match($this->regex, $subject, $result)) {
 			$result = array_filter($result, function ($key) { return !is_numeric($key); }, ARRAY_FILTER_USE_KEY);
 			$result = array_map(function ($value) { return urldecode($value); }, $result);
 			if (array_key_exists('__TAIL__', $result)) {
-				$tail = $result['__TAIL__'];
-				$this->tail = strlen($tail) ? $tail : false;
+				$tail = $result['__TAIL__'];//?:"";
+				$this->tail = $tail;
 				unset($result['__TAIL__']);
 			}
 			foreach ($result as $key => $value) if ($value) $this->parameters[$key] = $value;

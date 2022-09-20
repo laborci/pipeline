@@ -1,11 +1,16 @@
 <?php
 
 use Atomino2\Application\ApplicationInterface;
+use Atomino2\Debug\Debug;
 use Atomino2\DILoader\DILoader;
 use Symfony\Component\Dotenv\Dotenv;
 
 include 'vendor/autoload.php';
 putenv("ROOT=" . __DIR__);
+
+function debug(mixed ...$data) {
+	foreach ($data as $item) Debug::getInstance()?->debug($item, "user");
+}
 
 (new Dotenv())
 	->usePutenv()

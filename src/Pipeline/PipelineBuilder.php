@@ -1,28 +1,48 @@
 <?php namespace Atomino2\Pipeline;
 
-use DI\Container;
+use Atomino2\Pipeline\Exceptions\EndOfPipelineException;
+use DI\DependencyException;
+use DI\NotFoundException;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 class PipelineBuilder {
 	private array $segments = [];
 
-	public function __construct(private Container $di) { }
+	private ParameterBag $context;
 
-	public function pipe(string|array|Handler $handler, array $arguments = []): static {
-		if (is_array($handler)) [$handler, $arguments] = $handler;
-		if (!is_array($arguments)) $arguments = [$arguments];
+	public function __construct(private PipelineFactoryInterface $pipelineFactory) {
+		$this->context = new ParameterBag();
+	}
+
+	public function pipe(string|array|PipelineBuilder|null $handler, ParameterBag|array|null $arguments = null): static {
+		if (is_array($handler)) return $this->pipe(...$handler);
+		if (is_null($handler)) return $this;
+		if ($handler instanceof PipelineBuilder) {
+			array_push($this->segments, ... $handler->segments);
+			return $this;
+		}
+		if (is_null($arguments)) $arguments = [];
+		if (!($arguments instanceof ParameterBag) && !is_array($arguments)) throw new \InvalidArgumentException("arguments must be a Parameterbag or Array");
 		$this->segments[] = [$handler, $arguments];
 		return $this;
 	}
 
+	public function context(string|ParameterBag $key, $value = null): static {
+		if (is_string($key)) $this->context->set($key, $value);
+		else $this->context->replace($key->all());
+		return $this;
+	}
+
 	/**
-	 * @throws \DI\DependencyException
-	 * @throws \DI\NotFoundException
+	 * @return mixed
+	 * @throws EndOfPipelineException
+	 * @throws DependencyException
+	 * @throws NotFoundException
+	 * @throws \ReflectionException
 	 */
-	public function exec(array $context = []) {
-		/**
-		 * @var Pipeline $pipeline
-		 */
-		$pipeline = $this->di->make(Pipeline::class, ["context" => $context, "segments" => $this->segments]);
-		return $pipeline->next();
+	public function exec(): mixed {
+		$pipeline = $this->pipelineFactory->pipeline($this->context, $this->segments);
+		$result = $pipeline->next();
+		return $result;
 	}
 }

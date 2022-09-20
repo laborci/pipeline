@@ -1,17 +1,32 @@
 <?php namespace Atomino2\Pipeline;
 
-use Atomino2\Pipeline\Exceptions\PipelineSequenceDepletedException;
 use Atomino2\Pipeline\Exceptions\BreakException;
+use Atomino2\Pipeline\Exceptions\PipelineSequenceDepletedException;
 use DI\DependencyException;
 use DI\NotFoundException;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 class PipelineSequence {
+
+	private ParameterBag $context;
+
+	public function __construct() {
+		$this->context = new ParameterBag();
+	}
 
 	/** @var PipelineBuilder[] */
 	private array $pipelineBuilders = [];
 
-	public function add(PipelineBuilder $builder, array $context = []): static {
-		$this->pipelineBuilders[] = [$builder, $context];
+	public function add(PipelineBuilder $builder): static {
+		$this->pipelineBuilders[] = $builder;
+		return $this;
+	}
+
+	public function hasContext($key): bool { return $this->context->has($key); }
+
+	public function context(string|ParameterBag $key, $value): static {
+		if (is_string($key)) $this->context->set($key, $value);
+		else $this->context->replace($key->all());
 		return $this;
 	}
 
@@ -20,15 +35,11 @@ class PipelineSequence {
 	 * @throws PipelineSequenceDepletedException
 	 * @throws NotFoundException
 	 */
-	public function exec(array $context = []) {
-		/**
-		 * @var PipelineBuilder $builder
-		 */
-		foreach ($this->pipelineBuilders as $pipelineBuilder) {
-			[$builder, $builderContext] = $pipelineBuilder;
-			$context = array_merge($context, $builderContext);
+	public function exec() {
+		foreach ($this->pipelineBuilders as $builder) {
 			try {
-				return $builder->exec($context);
+				$builder->context($this->context);
+				return $builder->exec();
 			} catch (BreakException $e) {
 				// do nothing it just broke the current pipeline
 			}

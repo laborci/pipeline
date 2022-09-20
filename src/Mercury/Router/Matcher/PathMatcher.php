@@ -9,7 +9,7 @@ class PathMatcher extends Matcher {
 		$result = $matcher->match(trim($request->getPathInfo(), '/'));
 		if ($result) {
 			$bag->add($matcher->getParameters());
-			if ($tail = $matcher->getTail()) {
+			if (($tail = $matcher->getTail()) !== false) {
 				$request = $request->duplicate(
 					null,
 					null,

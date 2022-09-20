@@ -1,6 +1,8 @@
 <?php namespace App;
 
-class ApplicationCli extends Application {
+use Atomino2\Application\ApplicationInterface;
+
+class ApplicationCli implements ApplicationInterface {
 	public function run() {
 		echo "my cli app is running";
 	}

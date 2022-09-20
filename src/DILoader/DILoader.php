@@ -20,7 +20,8 @@ class DILoader {
 	}
 
 	public function loadList(string $root, string $commaseparated): static {
-		$this->load(...array_map(fn(string $path) => $root . '/' . trim($path), explode(",", $commaseparated)));
+		$list = array_map(fn(string $path) => $root . '/' . trim($path), explode(",", $commaseparated));
+		$this->load(...$list);
 		return $this;
 	}
 
@@ -30,6 +31,7 @@ class DILoader {
 	}
 
 	private function loadDefinitions() {
+		$definitions = [];
 		foreach ($this->definitions as $path) {
 			$parts = explode('/', $path);
 			$pattern = array_pop($parts);
@@ -43,9 +45,10 @@ class DILoader {
 					$file = realpath($dir . '/' . $filename);
 					if (file_exists($file) && !is_dir($file)) $files[$filename] = $file;
 				}
-				$this->builder->addDefinitions(...$files);
+				array_push($definitions, ...array_values($files));
 				chdir($cwd);
 			}
 		}
+		$this->builder->addDefinitions(...$definitions);
 	}
 }
