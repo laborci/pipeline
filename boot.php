@@ -19,7 +19,7 @@ function debug(mixed ...$data) {
 
 (new DILoader())
 	->loadList(getenv("ROOT"), getenv("DI"))
-	->build(getenv("DI_CC") ? (getenv("ROOT") . "/" . getenv("DI_CC")) : null)
+	->build(getenv("DI_COMPILED_CONTAINER") ? (getenv("ROOT") . "/" . getenv("DI_CC")) : null)
 	->get(ApplicationInterface::class)
 	->run()
 ;

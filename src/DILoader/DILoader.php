@@ -19,8 +19,8 @@ class DILoader {
 		return $this->builder->build();
 	}
 
-	public function loadList(string $root, string $commaseparated): static {
-		$list = array_map(fn(string $path) => $root . '/' . trim($path), explode(",", $commaseparated));
+	public function loadList(string $root, string $commaSeparated): static {
+		$list = array_map(fn(string $path) => $root . '/' . trim($path), explode(",", $commaSeparated));
 		$this->load(...$list);
 		return $this;
 	}
