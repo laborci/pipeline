@@ -1,8 +1,5 @@
 <?php namespace Atomino2\Pipeline;
 
-use Atomino2\Pipeline\Exceptions\EndOfPipelineException;
-use DI\DependencyException;
-use DI\NotFoundException;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class PipelineBuilder {
@@ -33,13 +30,6 @@ class PipelineBuilder {
 		return $this;
 	}
 
-	/**
-	 * @return mixed
-	 * @throws EndOfPipelineException
-	 * @throws DependencyException
-	 * @throws NotFoundException
-	 * @throws \ReflectionException
-	 */
 	public function exec(): mixed {
 		$pipeline = $this->pipelineFactory->pipeline($this->context, $this->segments);
 		$result = $pipeline->next();

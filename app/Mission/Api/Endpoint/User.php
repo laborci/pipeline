@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class User extends EndpointResponder {
 
+
 	#[Endpoint("/hello/:name=Elvis Presley", Endpoint::POST, Endpoint::GET)]
 	protected function sayHello(): Response {
 		return new JsonResponse(["message" => "Hello ".$this->getPathArg("name")]);

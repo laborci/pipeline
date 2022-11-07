@@ -1,0 +1,28 @@
+{% apply spaceless %}
+	<!doctype html>
+	<html lang="{{ smartpage.language }}">
+	<head>
+		{% with smart only %}
+			{% block head %}
+				<title>{{ title }}</title>
+				<meta charset="utf-8">
+				<meta name="data" content="{{ encodedData }}">
+				<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=.8, user-scalable=1">
+				{% for cssImport in css %}
+				<link rel="stylesheet" type="text/css" href="{{ cssImport }}?v={{ ver }}" />{% endfor %}
+				{% for jsImport in js %}
+				<script src="{{ jsImport }}?v={{ ver }}"></script>
+				{% endfor %}
+				<link rel="icon" href="{{ favicon }}">
+			{% endblock %}
+		{% endwith %}
+	</head>
+
+	<body {% if smart.class %} class="{{ smart.class }}"{% endif %}>
+	{% with {model} only %}
+		{% block content %}{% endblock %}
+	{% endwith %}
+	</body>
+
+	</html>
+{% endapply %}

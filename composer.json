@@ -20,6 +20,14 @@
         "codedungeon/php-cli-colors": "^1.12",
         "psr/log": "^3.0",
         "monolog/monolog": "^3.2",
-		"ext-curl": "*"
+		"ext-curl": "*",
+        "twig/twig": "^3.4",
+		"ext-openssl": "*",
+		"ext-pdo": "*",
+        "brick/varexporter": "^0.3.7",
+        "symfony/cache": "^6.1",
+		"ext-mysqli": "*",
+        "respect/validation": "^2.2",
+        "symfony/console": "^6.1"
 	}
 }

@@ -5,7 +5,9 @@ use Atomino2\Logger\Logger;
 use Psr\Log\LoggerInterface;
 
 class Debug {
+
 	private static Debug|null $instance;
+
 	public static function getInstance(): Debug|null {
 		if (!isset(static::$instance)) return null;
 		return static::$instance;

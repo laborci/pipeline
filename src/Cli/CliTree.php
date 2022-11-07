@@ -3,53 +3,86 @@
 use Codedungeon\PHPCliColors\Color;
 
 class CliTree {
+
+
 	static function draw(array $array, string|null $root = null) {
 
 		$text = '';
-		$env = [];
-		$array = static::sort($array);
+		$treeLines = [];
 
-		$keys = array_keys($array);
-		$last_key = end($keys);
-		foreach ($array as $key => $value) {
-			if (is_object($value)) {
-				$key .= ' <' . get_class($value) . '>';
-				$value = (array)($value);
-			}
-			$env[] = [$key === $last_key ? ' └─' : ' ├─', $key, is_array($value) ? null : (is_null($value) ? '' : $value)];
-			if (is_array($value)) static::tree($value, $env, [$key === $last_key]);
 
-		}
-		if (!is_null($root)) $text .= Color::LIGHT_CYAN_ALT . $root . Color::RESET . "\n";
-		foreach ($env as $item) {
-			$text .= (Color::WHITE . $item[0] . ' ' . Color::RESET);
-			if (is_null($item[2])) {
-				$text .= (Color::CYAN . $item[1] . Color::RESET) . "\n";
-			} else {
-				$text .= (Color::GREEN . Color::BOLD . $item[1] . Color::RESET . ': ');
-				if ($item[2] === '') {
-					$text .= (Color::GREEN . Color::BOLD . '-' . COLOR::RESET . "\n");
-				} else {
-					$text .= (Color::WHITE . $item[2] . Color::RESET . "\n");
+		static::tree($array, $treeLines, [false]);
+
+		foreach ($treeLines as $line) {
+			$text .= Color::LIGHT_GRAY . $line['leaf'] . ' ' . Color::RESET;
+			if ($line['hint']) {
+				$text .= Color::CYAN . Color::BOLD . $line['key'] . Color::RESET;
+				if ($line['hint'] === 'empty-array') $text .= Color::LIGHT_GRAY . ': ' . Color::WHITE . '[]' . Color::RESET;
+				if ($line['type']) {
+					$text .= Color::LIGHT_GRAY . ' (' . $line['type'] . ')' . Color::RESET;
 				}
+			} else {
+				$text .= Color::BLUE . $line['key'] . Color::RESET;
+				$text .= Color::LIGHT_GRAY . ': ' . Color::RESET;
+				$text .= Color::BOLD . static::value($line['value']);
 			}
+			$text .= "\n" . Color::RESET;
 		}
 		return $text;
 	}
+
+	protected static function value($value): string {
+		$text = '?';
+		$type = fn(string $string) => '';
+		if (is_string($value)) $text = $type('string') . Color::YELLOW . '"' . $value . '"';
+		elseif (is_int($value)) $text = $type('int') . Color::LIGHT_YELLOW . $value;
+		elseif (is_float($value)) $text = $type('float') . Color::YELLOW . $value;
+		elseif (is_bool($value)) $text = $type('bool') . Color::BOLD . ($value ? Color::LIGHT_GREEN . 'true' : Color::RED . 'false');
+		elseif (is_null($value)) $text = $type('null') . Color::LIGHT_GRAY . 'null';
+		elseif (is_resource($value)) $text = $type('resource') . Color::WHITE . $value;
+		return $text;
+	}
+
+
 	protected static function tree($branch, &$env, $level) {
+		$branch = static::sort($branch);
+
 		$keys = array_keys($branch);
 		$last_key = end($keys);
+
 		foreach ($branch as $key => $value) {
-			if (is_object($value)) $value = get_object_vars($value);
+			$treeKey = explode("\0", $key);
+			$treeKey = array_pop($treeKey);
+
 			$leaf = '';
-			for ($i = 0; $i < count($level); $i++) {
-				$leaf .= $level[$i] ? '   ' : ' │ ';
-			}
+			for ($i = 1; $i < count($level); $i++) $leaf .= $level[$i] ? '   ' : ' │ ';
 			$leaf .= $last_key === $key ? ' └─' : ' ├─';
-			$env[] = [$leaf, $key, is_array($value) ? null : (is_null($value) ? '' : $value)];
-			$l = $level;
-			$l[] = ($key === $last_key);
-			if (is_array($value)) static::tree($value, $env, $l);
+
+			$hint = false;
+			if (is_array($value)) $hint = count($value) ? 'array' : 'empty-array';
+			if (is_object($value)) $hint = 'object';
+
+			$type = false;
+			if (is_object($value)) $type = get_class($value);
+
+			if (is_object($value)) {
+				if (count($level) === 1) $value = (array)$value;
+				else $value = get_object_vars($value);
+			}
+
+			$env[] = [
+				'leaf'  => $leaf,
+				'key'   => $treeKey,
+				'value' => $value,
+				'hint'  => $hint,
+				'type'  => $type,
+			];
+
+			if (is_array($value)) {
+				$l = $level;
+				$l[] = ($key === $last_key);
+				static::tree($value, $env, $l);
+			}
 		}
 	}
 
@@ -65,3 +98,9 @@ class CliTree {
 		return array_merge($values, $arrays);
 	}
 }
+
+class Nothing { }
+
+class ArrayValue { }
+
+class EmptyArray { }

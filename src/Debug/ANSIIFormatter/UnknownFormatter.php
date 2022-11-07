@@ -8,7 +8,6 @@ class UnknownFormatter implements FormatterInterface {
 
 	public function format(mixed $payload, string|null $channel = null): string {
 		$channel = "<".$channel.">";
-
 		$text = Color::LIGHT_WHITE_ALT . Color::BG_BLUE . Color::BOLD . " " . $channel . " " . Color::RESET . ' ';
 
 		$type = fn(string $string) => Color::LIGHT_GRAY . Color::BG_BLACK . $string . ' ' . Color::RESET;

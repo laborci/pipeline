@@ -1,15 +1,24 @@
 <?php namespace App\Mission\Public\Page;
 
-use Atomino2\Mercury\Responder\AbstractResponder;
+use App\Carbonite\Store\UserStore;
+use Atomino2\Mercury\SmartResponder\Attr\Template;
+use Atomino2\Mercury\SmartResponder\SmartResponder;
+use Atomino2\Mercury\SmartResponder\SmartResponderEnv;
 use Symfony\Component\HttpFoundation\Response;
 
-class IndexPage extends AbstractResponder {
+#[Template("public", "index.twig")]
+class IndexPage extends SmartResponder {
 
-	public static function setup(string $message): array { return parent::setup(get_defined_vars()); }
+	public string $name;
+	public string $friend;
+
+	public function __construct(SmartResponderEnv $env, private UserStore $userStore) { parent::__construct($env); }
+
 
 	public function respond(): Response {
-		$response = new Response();
-		$response->setContent($this->arg("message"));
-		return $response;
+		$this->userStore::search()->first();
+		$this->friend = "John Lennon";
+		$this->name = "Elvis Presley";
+		return $this->render();
 	}
 }

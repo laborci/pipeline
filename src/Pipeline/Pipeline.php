@@ -11,12 +11,6 @@ class Pipeline {
 	) {
 	}
 
-	/**
-	 * @throws \DI\NotFoundException
-	 * @throws EndOfPipelineException
-	 * @throws \ReflectionException
-	 * @throws \DI\DependencyException
-	 */
 	public function next() {
 		if (count($this->segments) === 0) throw new EndOfPipelineException();
 		$segment = array_shift($this->segments);
@@ -35,11 +29,6 @@ class Pipeline {
 	public function getContext(string|null $key = null) { return is_null($key) ? $this->context->all() : $this->context->get($key); }
 	public function setContext(string $key, mixed $value) { $this->context->set($key, $value); }
 
-	/**
-	 * @throws \DI\NotFoundException
-	 * @throws \ReflectionException
-	 * @throws \DI\DependencyException
-	 */
 	private function makeHandler(string|Handler $handler, array $arguments, array $context, bool $lastHandler): Handler {
 		if (is_string($handler)) {
 			$handler = $this->pipelineFactory->handler($handler);

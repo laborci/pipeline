@@ -7,6 +7,6 @@ class MissionRouter extends Router {
 	protected function route() {
 		$this(host: "api.**")->pipe(Api\Router::class);
 		$this(host: "www.**")->pipe(Public\Router::class);
-		$this()->pipe(IndexPage::setup("ERROR 404 Host not found"));
+		$this()->pipe(IndexPage::class);
 	}
 }

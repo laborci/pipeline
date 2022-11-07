@@ -1,8 +1,0 @@
-{
-	"bla": "blabla",
-	"json": "value",
-	"json2": {
-		"subkey": "value"
-	},
-	"db-pass@v": "DBPASSWORD"
-}

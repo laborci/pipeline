@@ -2,8 +2,6 @@
 
 use Atomino2\Pipeline\Exceptions\BreakException;
 use Atomino2\Pipeline\Exceptions\PipelineSequenceDepletedException;
-use DI\DependencyException;
-use DI\NotFoundException;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class PipelineSequence {
@@ -28,12 +26,7 @@ class PipelineSequence {
 		return $this;
 	}
 
-	/**
-	 * @throws DependencyException
-	 * @throws PipelineSequenceDepletedException
-	 * @throws NotFoundException
-	 */
-	public function exec() {
+	public function exec():mixed {
 		foreach ($this->pipelineBuilders as $builder) {
 			try {
 				$builder->context($this->context);

@@ -32,6 +32,7 @@ class ErrorCapture {
 
 	private function error(int $errno, string $errstr, string $errfile, int $errline) {
 		foreach ($this->handlers as $handler) $handler->handle(new Error($this->errorType($errno), $errstr, $errfile, $errline));
+		return false;
 	}
 
 	private function fatalError() {
