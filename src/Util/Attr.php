@@ -1,7 +1,7 @@
 <?php namespace Atomino2\Util;
 
 abstract class Attr {
-	
+
 	/**
 	 * @param \ReflectionClass|\ReflectionMethod|string $reflection
 	 * @param string|null $method

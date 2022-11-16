@@ -32,6 +32,6 @@ class DotNotation {
 		}
 		return $results;
 	}
-	
+
 
 }

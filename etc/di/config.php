@@ -1,11 +1,11 @@
 <?php
 
-use Atomino2\Config\ConfigLoader;
-use Atomino2\Config\Reader\DotSeparatedINIConfigReader;
-use Atomino2\Config\Reader\JSONConfigReader;
-use Atomino2\Config\Reader\PHPConfigReader;
-use Atomino2\Config\ValueParser\EnvConfigValueParser;
-use Atomino2\Config\ValueParser\PathConfigValueParser;
+use Atomino2\Application\Config\ConfigLoader;
+use Atomino2\Application\Config\Reader\DotSeparatedINIConfigReader;
+use Atomino2\Application\Config\Reader\JSONConfigReader;
+use Atomino2\Application\Config\Reader\PHPConfigReader;
+use Atomino2\Application\Config\ValueParser\EnvConfigValueParser;
+use Atomino2\Application\Config\ValueParser\PathConfigValueParser;
 
 $loader = new ConfigLoader();
 $loader->addReader("php", new PHPConfigReader());

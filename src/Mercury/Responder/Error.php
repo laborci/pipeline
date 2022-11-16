@@ -2,14 +2,18 @@
 
 use Symfony\Component\HttpFoundation\Response;
 
-class Error extends AbstractResponder {
-	static public function setup(int $statusCode = Response::HTTP_INTERNAL_SERVER_ERROR, string $message = "", string $type = "", string $code = "") { return parent::setup(get_defined_vars()); }
-	protected function respond(): Response|null {
+class Error extends Responder {
+	const ARG_STATUS_CODE = 'status_code';
+	const ARG_MESSAGE     = 'message';
+	const ARG_TYPE        = 'type';
+	const ARG_CODE        = 'code';
+
+	protected function respond(): Response {
 		$this->error(
-			$this->arg("statusCode"),
-			$this->arg("message"),
-			$this->arg("type"),
-			$this->arg("code")
+			$this->args->get("statusCode", 404),
+			$this->args->get("message", ""),
+			$this->args->get("type", ""),
+			$this->args->get("code", -1)
 		);
 	}
 }

@@ -1,15 +1,20 @@
 <?php namespace Atomino2\Mercury\Middleware;
 
+use Atomino2\Mercury\Pipeline\Handler;
 use Atomino2\Mercury\RequestHandlerErrorException;
 use Symfony\Component\HttpFoundation\Response;
 
-class CatchException extends AbstractMiddleware {
-	public static function setup(bool|array $verbose = false, bool $throw = true) { return parent::setup(get_defined_vars()); }
-	protected function handle(): Response|null {
+class CatchException extends Handler {
+
+	const ARG_VERBOSE = 'verbose';
+	const ARG_THROW   = 'throw';
+
+	public function handle(): Response|null {
+		$verbose = $this->args->getBoolean(self::ARG_VERBOSE, false);
+		$throw = $this->args->getBoolean(self::ARG_THROW, true);
 		try {
 			return $this->next();
 		} catch (\Throwable $exception) {
-			$verbose = $this->arg("verbose");
 
 			if ($exception instanceof RequestHandlerErrorException) {
 				$verbose = true;
@@ -39,14 +44,13 @@ class CatchException extends AbstractMiddleware {
 			} else {
 				$this->sendErrorMessage();
 			}
-			if ($this->arg("throw") && !($exception instanceof RequestHandlerErrorException)) throw $exception;
+			if ($throw && !($exception instanceof RequestHandlerErrorException)) throw $exception;
 			else die();
 		}
 	}
 
 	protected function sendErrorMessage(int $statusCode = Response::HTTP_INTERNAL_SERVER_ERROR, string $errorMessage = "", string $errorType = "", string $errorCode = "") {
-		$request = $this->ctx("original-request");
-		$request = $request ?: $this->ctx("request");
+		$request = $this->originalRequest;
 		$message = [
 			"status"  => [
 				"code"    => $statusCode,

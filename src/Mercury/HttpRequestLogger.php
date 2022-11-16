@@ -1,6 +1,6 @@
 <?php namespace Atomino2\Mercury;
 
-use Atomino2\Logger\Logger;
+use Atomino2\Watson\Logger\Logger;
 
 class HttpRequestLogger extends Logger {
 	/**

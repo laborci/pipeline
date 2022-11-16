@@ -2,8 +2,6 @@
 
 use Atomino2\Carbonite\Carbonizer\Accessor\GetSet;
 use Atomino2\Carbonite\Carbonizer\Accessor\Handler;
-use Atomino2\Carbonite\Carbonizer\Accessor\Relation;
-use Atomino2\Carbonite\Carbonizer\Property\JsonProperty;
 use Atomino2\Database\Connection;
 use DI\Container;
 
@@ -23,7 +21,8 @@ class Model {
 	/** @var Property[] */
 	protected array $properties;
 	/** @var Accessor[] */
-	protected array $accessors;
+	protected array   $accessors;
+	private ?\Closure $initializer = null;
 
 	public function getEntity(): string { return $this->entity; }
 	public function getConnection(): string { return $this->connection; }
@@ -186,5 +185,10 @@ class Model {
 				\Closure::bind(fn($validatorDecorator) => $this->validatorDecorator = $validatorDecorator, $property, Property::class)($propPreset['validator']);
 			}
 		}
+		$this->initializer = $carbonite->getInitializer();
+	}
+
+	public function initialize(Container $di): void {
+		if (!is_null($this->initializer)) ($this->initializer)($di);
 	}
 }

@@ -6,10 +6,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CliCommand extends Command {
 
-	protected Style $style;
-	protected InputInterface $input;
+	protected Style           $style;
+	protected InputInterface  $input;
 	protected OutputInterface $output;
-	protected \Closure $executable;
+	protected \Closure        $executable;
 
 	public function __invoke(callable $exec) { $this->executable = $exec; }
 	public function define(callable $exec) { $this->executable = $exec; }

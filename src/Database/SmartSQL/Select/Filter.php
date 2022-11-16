@@ -2,13 +2,11 @@
 
 use Atomino2\Database\Connection;
 use Atomino2\Database\SmartSQL\SqlGeneratorInterface;
-use Stringable;
-use PDO;
 
 class Filter implements SqlGeneratorInterface {
 	const NOT = 1 << 0;
 	const AND = 1 << 1;
-	const OR = 1 << 2;
+	const OR  = 1 << 2;
 
 	/** @var Filter[] */
 	private array $chain = [];

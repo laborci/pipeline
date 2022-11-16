@@ -10,13 +10,13 @@ use Symfony\Component\Mime\MimeTypes;
 class FileServer {
 
 	public function __construct(
-		private Request      $request,
-		private PathResolver $pathResolver
+		private readonly Request $request,
+		private readonly PathResolver $pathResolver
 	) {
 	}
 
-	public function file(string $url, string $file){
-		if($this->request->getPathInfo() === $url){
+	public function file(string $url, string $file) {
+		if ($this->request->getPathInfo() === $url) {
 			$file = ($this->pathResolver)($file);
 			$this->serveFile($file);
 		}
@@ -33,7 +33,7 @@ class FileServer {
 		return $this;
 	}
 
-	protected function serveFile(string $file){
+	protected function serveFile(string $file) {
 		if (file_exists($file)) {
 			BinaryFileResponse::trustXSendfileTypeHeader();
 			$file = new File($file);

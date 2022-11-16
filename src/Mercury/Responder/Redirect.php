@@ -1,9 +1,10 @@
 <?php namespace Atomino2\Mercury\Responder;
 
-use JetBrains\PhpStorm\Pure;
+use Atomino2\Mercury\Pipeline\Handler;
 use Symfony\Component\HttpFoundation\Response;
 
-class Redirect extends AbstractResponder {
-	static public function setup($url = '/', $statusCode = 302) { return parent::setup(get_defined_vars()); }
-	protected function respond(): Response|null { $this->redirect($this->arg('url'), $this->arg('statusCode')); }
+class Redirect extends Handler {
+	const ARG_URL         = 'url';
+	const ARG_STATUS_CODE = 'status_code';
+	public function handle(): Response|null { $this->redirect($this->args->get(self::ARG_URL), $this->args->get(self::ARG_STATUS_CODE)); }
 }

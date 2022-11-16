@@ -6,7 +6,7 @@ use Atomino2\Database\SmartSQL\SqlGeneratorInterface;
 abstract class Compare implements SqlGeneratorInterface {
 
 	protected string|null $field;
-	protected Connection $connection;
+	protected Connection  $connection;
 
 	protected bool $not = false;
 
@@ -20,12 +20,12 @@ abstract class Compare implements SqlGeneratorInterface {
 	}
 
 	protected function quoteValue(null|string|int|float|\DateTime|SqlGeneratorInterface $subject): string {
-		if($subject instanceof SqlGeneratorInterface) return $subject->getSql($this->connection);
+		if ($subject instanceof SqlGeneratorInterface) return $subject->getSql($this->connection);
 		return $this->connection->getSqlHelper()->quoteAndEscapeValue($subject);
 	}
 
 	protected function quoteEntity(null|string|SqlGeneratorInterface $subject): string {
-		if($subject instanceof SqlGeneratorInterface) return $subject->getSql($this->connection);
+		if ($subject instanceof SqlGeneratorInterface) return $subject->getSql($this->connection);
 		return $this->connection->getSqlHelper()->quoteEntity($subject);
 	}
 

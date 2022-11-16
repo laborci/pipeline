@@ -2,7 +2,7 @@
 
 class CompareJson extends Compare {
 
-	private mixed $value;
+	private mixed  $value;
 	private string $path;
 
 	public function __construct(string $field, mixed $value, string $path = "$") {
@@ -12,7 +12,7 @@ class CompareJson extends Compare {
 	}
 
 	public function createSQL(): string {
-		$sql = ($this->not ? " NOT " : " ") . "JSON_CONTAINS(" .$this->quoteEntity($this->field).",". $this->quoteValue($this->value) . ", " . $this->quoteValue($this->path) . ")";
+		$sql = ($this->not ? " NOT " : " ") . "JSON_CONTAINS(" . $this->quoteEntity($this->field) . "," . $this->quoteValue($this->value) . ", " . $this->quoteValue($this->path) . ")";
 		return $sql;
 	}
 }

@@ -1,3 +1,3 @@
 <?php namespace Atomino2\Carbonite\Event;
 
-class BeforeUpdate extends EventInterface {}
+class BeforeUpdate extends EventInterface { }

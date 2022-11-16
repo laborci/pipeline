@@ -3,7 +3,6 @@
 use Atomino2\Database\Connection;
 use Atomino2\Database\SmartSQL\SQL;
 use Atomino2\Database\SmartSQL\SqlGeneratorInterface;
-use Atomino2\Database\SmartSQL\Select\Filter;
 
 class Join implements SqlGeneratorInterface {
 

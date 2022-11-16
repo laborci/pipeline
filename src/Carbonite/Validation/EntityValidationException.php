@@ -2,7 +2,7 @@
 
 class EntityValidationException extends \Exception {
 
-	/** @var string[]  */
+	/** @var string[] */
 	private array $messages;
 	public function getMessages(): array { return $this->messages; }
 	public function __construct(string ...$messages) {

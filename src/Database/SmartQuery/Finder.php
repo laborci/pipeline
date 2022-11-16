@@ -1,15 +1,10 @@
 <?php namespace Atomino2\Database\SmartQuery;
 
+use App\Carbonite\Store\UserStore;
 use Atomino2\Database\Connection;
 use Atomino2\Database\SmartSQL\Expression;
-use Atomino2\Database\SmartSQL\Select\From;
-use Atomino2\Database\SmartSQL\Select\GroupBy;
-use Atomino2\Database\SmartSQL\Select\Join;
-use Atomino2\Database\SmartSQL\Select\Limit;
-use Atomino2\Database\SmartSQL\Select\Order;
-use Atomino2\Database\SmartSQL\Select\Select;
 use Atomino2\Database\SmartSQL\Select\Filter;
-use Atomino2\Database\SmartSQL\SQL;
+use Atomino2\Database\SmartSQL\Select\Select;
 use Symfony\Component\Cache\CacheItem;
 use Symfony\Contracts\Cache\CacheInterface;
 
@@ -24,7 +19,7 @@ class Finder {
 	) {
 	}
 
-	public function resetFields():static{
+	public function resetFields(): static {
 		$this->select->resetFields();
 		return $this;
 	}
@@ -105,7 +100,7 @@ class Finder {
 		return $this->fetch($sql, $counting);
 	}
 
-	public function count():int{
+	public function count(): int {
 		$sql = $this->select->getCountSql($this->connection);
 		$record = $this->fetch($sql, false)->getFirstRecord();
 		return is_null($record) ? 0 : array_pop($record);

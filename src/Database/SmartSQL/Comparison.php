@@ -9,7 +9,7 @@ use Atomino2\Database\SmartSQL\Compare\CompareOperator;
 
 class Comparison implements SqlGeneratorInterface {
 
-	private array $values = [];
+	private array           $values = [];
 	private readonly string $field;
 
 	public function __construct(string $field, mixed ...$values) {

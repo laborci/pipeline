@@ -1,0 +1,21 @@
+{
+    "name": "atomino/bundle-attachment",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "laborci",
+            "email": "gergely@laborci.hu"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Atomino\\Bundle\\Attachment\\": "bundle/",
+            "Atomino\\Carbon\\Plugins\\Attachment\\": "plugin-carbon/",
+            "Atomino\\Mercury\\Plugins\\Attachment\\": "plugin-mercury/"
+        },
+        "files": [
+            "bundle/autoload.php"
+        ]
+    }
+}

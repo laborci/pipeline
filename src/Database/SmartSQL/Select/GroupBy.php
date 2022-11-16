@@ -12,7 +12,7 @@ class GroupBy implements SqlGeneratorInterface {
 		array_push($this->fields, ...$field);
 	}
 	public function getSql(Connection $connection): string {
-		if(count($this->fields) === 0) return "";
+		if (count($this->fields) === 0) return "";
 		return SQL::expr("GROUP BY :e", $this->fields)->getSQL($connection);
 	}
 }

@@ -1,9 +1,16 @@
 <?php namespace Atomino2\Carbonite\Event;
 
+use Atomino2\Carbonite\Entity;
+
 abstract class EventInterface {
 
-	private bool $cancelled = false;
+	private bool                   $cancelled     = false;
 	private null|\Throwable|string $cancelMessage = null;
+
+	public function getItem(): Entity { return $this->item; }
+
+
+	public function __construct(private Entity $item) { }
 
 	public function isCancelled(): bool { return $this->cancelled; }
 

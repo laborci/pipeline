@@ -7,7 +7,7 @@ class Table {
 
 	private ?Field $primary = null;
 	/** @var Field[]|null */
-	private ?array $fields = null;
+	private ?array $fields  = null;
 	private ?array $uniques = null;
 
 	public function __construct(private readonly Connection $connection, private readonly string $name, private readonly string $type) {
@@ -60,7 +60,6 @@ class Table {
 			$this->fields = [];
 			$fields = $this->getFieldData();
 			foreach ($fields as $descriptor) {
-				debug($descriptor);
 				$field = Field::create($descriptor);
 				if (!is_null($field) && $field->isPrimary()) $this->primary = $field;
 				$this->fields[$descriptor["COLUMN_NAME"]] = $field;

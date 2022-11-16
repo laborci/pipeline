@@ -7,14 +7,14 @@ use Atomino2\Database\SmartSQL\SqlGeneratorInterface;
 
 class Select implements SqlGeneratorInterface {
 
-	private Fields $fields;
+	private Fields   $fields;
 	private ?GroupBy $groupBy = null;
-	private ?From $from = null;
-	private ?Join $join = null;
-	private ?Where $having = null;
-	private ?Where $where = null;
-	private ?Order $order = null;
-	private ?Limit $limit = null;
+	private ?From    $from    = null;
+	private ?Join    $join    = null;
+	private ?Where   $having  = null;
+	private ?Where   $where   = null;
+	private ?Order   $order   = null;
+	private ?Limit   $limit   = null;
 
 	public bool $counting = false;
 
@@ -80,7 +80,7 @@ class Select implements SqlGeneratorInterface {
 	}
 
 	public function order(array|string ...$orders): static {
-		if (is_null($this->order)) $this->order = new Order();
+		if (is_null($this->order) && count($orders)) $this->order = new Order();
 		foreach ($orders as $order) {
 			if (is_array($order)) {
 				$field = $order[0];

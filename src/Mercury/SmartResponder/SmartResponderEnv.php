@@ -6,8 +6,8 @@ use Twig\Loader\FilesystemLoader;
 
 class SmartResponderEnv {
 	private FilesystemLoader $loader;
-	private Environment $twigEnvironment;
-	private string $frontendVersion;
+	private Environment      $twigEnvironment;
+	private string           $frontendVersion;
 
 	public function getFrontendVersion(): string { return $this->frontendVersion; }
 	public function getTwigEnvironment(): Environment { return $this->twigEnvironment; }

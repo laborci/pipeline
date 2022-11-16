@@ -9,8 +9,6 @@ use Atomino2\Carbonite\Carbonizer\Property\IntProperty;
 use Atomino2\Carbonite\Carbonizer\Property\JsonProperty;
 use Atomino2\Carbonite\Carbonizer\Property\SetProperty;
 use Atomino2\Carbonite\Carbonizer\Property\StringProperty;
-use Atomino2\Carbonite\Carbonizer\Access;
-use Atomino2\Carbonite\Carbonizer\Persist;
 
 class PropertyFactory {
 	public function __construct() { }

@@ -3,31 +3,31 @@
 class Field {
 
 	public mixed $characterMaximumLength = null;
-	public mixed $characterOctetLength = null;
-	public mixed $characterSetName = null;
-	public mixed $collationName = null;
-	public mixed $columnComment = null;
-	public mixed $columnDefault = null;
-	public mixed $columnKey = null;
-	public mixed $columnName = null;
-	public mixed $columnType = null;
-	public mixed $dataType = null;
-	public mixed $datetimePrecision = null;
-	public mixed $extra = null;
-	public mixed $generationExpression = null;
-	public mixed $isNullable = null;
-	public mixed $numericPrecision = null;
-	public mixed $numericScale = null;
-	public mixed $ordinalPosition = null;
-	public mixed $privileges = null;
-	public mixed $srsId = null;
-	public mixed $tableCatalog = null;
-	public mixed $tableName = null;
-	public mixed $tableSchema = null;
-	public mixed $columnTypeRaw = null;
+	public mixed $characterOctetLength   = null;
+	public mixed $characterSetName       = null;
+	public mixed $collationName          = null;
+	public mixed $columnComment          = null;
+	public mixed $columnDefault          = null;
+	public mixed $columnKey              = null;
+	public mixed $columnName             = null;
+	public mixed $columnType             = null;
+	public mixed $dataType               = null;
+	public mixed $datetimePrecision      = null;
+	public mixed $extra                  = null;
+	public mixed $generationExpression   = null;
+	public mixed $isNullable             = null;
+	public mixed $numericPrecision       = null;
+	public mixed $numericScale           = null;
+	public mixed $ordinalPosition        = null;
+	public mixed $privileges             = null;
+	public mixed $srsId                  = null;
+	public mixed $tableCatalog           = null;
+	public mixed $tableName              = null;
+	public mixed $tableSchema            = null;
+	public mixed $columnTypeRaw          = null;
 
-	public string|null $name = null;
-	public array|null $options = null;
+	public string|null $name    = null;
+	public array|null  $options = null;
 
 
 	public function __construct(array $data) {

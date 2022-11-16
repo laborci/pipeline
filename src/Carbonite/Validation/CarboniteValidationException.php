@@ -2,18 +2,16 @@
 
 class CarboniteValidationException extends \Exception {
 
-	private string $entityShortName;
+	private string          $entityShortName;
 	private readonly string $entityClass;
-	private readonly ?int $entityId;
+	private readonly ?int   $entityId;
 	public function getEntityClass(): string { return $this->entityClass; }
 	public function getEntityShortName(): string { return $this->entityShortName; }
 	public function getEntityId(): ?int { return $this->entityId; }
 
-	public function isValid(): bool { return is_null($this->entityValidationException) && is_null($this->uniqueConstraintViolationException) && 0 === count($this->propertyValidationExceptions); }
-
 	/** @var PropertyValidationException[] */
-	private array $propertyValidationExceptions = [];
-	private ?EntityValidationException $entityValidationException = null;
+	private array                               $propertyValidationExceptions       = [];
+	private ?EntityValidationException          $entityValidationException          = null;
 	private ?UniqueConstraintViolationException $uniqueConstraintViolationException = null;
 	/**
 	 * @return PropertyValidationException[]
@@ -32,8 +30,7 @@ class CarboniteValidationException extends \Exception {
 		parent::__construct();
 	}
 
-	public function setEntityValidationException(EntityValidationException|null $exception) {
-		if (is_null($exception)) return;
+	public function setEntityValidationException(EntityValidationException $exception) {
 		$this->entityValidationException = $exception;
 	}
 	public function addPropertyValidationException(PropertyValidationException|null $exception) {

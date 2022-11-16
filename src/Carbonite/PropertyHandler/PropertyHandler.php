@@ -30,8 +30,8 @@ abstract class PropertyHandler {
 	final protected function addEntityEventListener(string|array $event, \Closure $handler): void {
 		\Closure::bind(fn($event, $handler) => $this->addEventListener($event, $handler), $this->entity, Entity::class)($event, $handler);
 	}
-	final protected function fireEntityEvent(EventInterface $event): void {
-		\Closure::bind(fn($event) => $this->fireEvent($event), $this->entity, Entity::class)($event);
+	final protected function dispatchEvent(EventInterface $event): void {
+		\Closure::bind(fn($event) => $this->dispatchEvent($event), $this->entity, Entity::class)($event);
 	}
 	#endregion
 

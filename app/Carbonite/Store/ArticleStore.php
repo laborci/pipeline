@@ -13,7 +13,7 @@ use Atomino2\Database\SmartSQL\Select\Filter;
  * @method __ArticleFinder|null hasMany(string $property, int|null $id)
  * @method Article pick(int $id)
  * @method Article[] collect(...$ids)
- * @method Article build(array $data)
+ * @method Article createAndLoadRecord(array $data)
  * @method Article create()
  */
 class ArticleStore extends EntityStore {

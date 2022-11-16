@@ -13,7 +13,7 @@ use Atomino2\Database\SmartSQL\Select\Filter;
  * @method __UserFinder|null hasMany(string $property, int|null $id)
  * @method User pick(int $id)
  * @method User[] collect(...$ids)
- * @method User build(array $data)
+ * @method User createAndLoadRecord(array $data)
  * @method User create()
  */
 class UserStore extends EntityStore {

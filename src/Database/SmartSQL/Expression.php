@@ -3,7 +3,7 @@
 use Atomino2\Database\Connection;
 
 class Expression implements SqlGeneratorInterface {
-	private array $arguments;
+	private array           $arguments;
 	private readonly string $sql;
 
 	public function __construct(string $sql, mixed ...$arguments) {

@@ -1,5 +1,5 @@
 <?php namespace Atomino2\Database\SmartStructure\Field;
 
-class DateTimeField extends DateField{
+class DateTimeField extends DateField {
 
 }

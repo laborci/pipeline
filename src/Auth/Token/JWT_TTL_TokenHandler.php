@@ -1,7 +1,5 @@
 <?php namespace Atomino2\Auth\Token;
 
-use Atomino2\Auth\Token\JWT_TokenHandler;
-
 class JWT_TTL_TokenHandler extends JWT_TokenHandler {
 
 	private int $ttl;
@@ -13,7 +11,7 @@ class JWT_TTL_TokenHandler extends JWT_TokenHandler {
 
 	public function create(array|int|string $payload, array $header = []): string {
 		$header["issued"] = time();
-		if(!array_key_exists("ttl", $header)) $header["ttl"] = $this->ttl;
+		if (!array_key_exists("ttl", $header)) $header["ttl"] = $this->ttl;
 		return parent::create($payload, $header);
 	}
 

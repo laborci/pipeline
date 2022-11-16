@@ -61,7 +61,6 @@ use \Atomino2\Database\SmartSQL\Comparison;
  */
 #[CarbonizedModel('{{SERIALIZED_MODEL}}')]
 abstract class __{{ENTITY_NAME}} extends Entity {
-	const __STORE__ = \{{STORE_NAMESPACE}}\{{ENTITY_NAME}}Store::class;
 {{CODE}}
 }
 
@@ -79,10 +78,15 @@ EOF;
 	private string       $machines;
 	private CodeFinder   $codeFinder;
 	private PathResolver $pathResolver;
+	private Container    $di;
 
-	public function __construct(private Container $di) {
-		$this->codeFinder = $di->get(CodeFinder::class);
-		$this->pathResolver = $di->get(PathResolver::class);
+	public function __construct(Container $di, CodeFinder $codeFinder, PathResolver $pathResolver, string $entities, string $stores, string $machine) {
+		$this->di = $di;
+		$this->codeFinder = $codeFinder;
+		$this->pathResolver = $pathResolver;
+		$this->entities = $entities;
+		$this->stores = $stores;
+		$this->machines = $machine;
 	}
 
 	public function update(Style|null $style = null) {
@@ -93,7 +97,6 @@ EOF;
 
 		// COLLECT CARBONITES
 		foreach ($entities as $entity) $carbonites[$entity] = \Closure::bind(fn($e) => $e::carbonize(), null, $entity)($entity);
-
 
 		// CREATE MODELS
 		foreach ($entities as $entity) $models[$entity] = new Model($entity, $carbonites[$entity], $this->di);
@@ -116,18 +119,15 @@ EOF;
 					$key,
 					$multi,
 					Relation::RELATION,
-					$target,
 					$this->stores . '\\' . $targetShortName . 'Store',
 					$multi ? $target . "[]" : $target
 				);
 				\Closure::bind(fn($property, $accessor) => $this->accessors[$property] = $accessor, $models[$entity], Model::class)($property, $accessor);
 				if ($targetProperty !== null) {
-					$entityShortName = $translate["{{ENTITY_NAME}}"] = (new \ReflectionClass($entity))->getShortName();
 					$accessor = new Relation(
 						$key,
 						$multi,
 						Relation::REVERSE,
-						$entity,
 						$this->stores . '\\' . $entityShortName . 'Store',
 						$this->machines . '\\__' . $entityShortName . 'Finder'
 					);
@@ -136,7 +136,6 @@ EOF;
 			}
 		}
 
-		debug($models);
 
 		// DUMP
 		foreach ($models as $model) {
@@ -155,8 +154,9 @@ EOF;
 					Access::READ       => "@property-read",
 					Access::WRITE      => "@property-write",
 					Access::READ_WRITE => "@property",
+					Access::HIDDEN     => false
 				};
-				$annotations[] = sprintf(" * %s %s $%s", $propertyAnnotation, $type, $name);
+				if ($propertyAnnotation !== false) $annotations[] = sprintf(" * %s %s $%s", $propertyAnnotation, $type, $name);
 			}
 			$translate['{{ANNOTATIONS}}'] = join("\n", $annotations);
 

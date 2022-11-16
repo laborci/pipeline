@@ -1,29 +1,27 @@
 <?php namespace Atomino2\Mercury\SmartResponder;
 
-use Atomino2\Mercury\Responder\AbstractResponder;
+use Atomino2\Mercury\Responder\Responder;
 use Atomino2\Mercury\SmartResponder\Attr\CSS;
 use Atomino2\Mercury\SmartResponder\Attr\JS;
 use Atomino2\Mercury\SmartResponder\Attr\Smart;
 use Atomino2\Mercury\SmartResponder\Attr\Template;
 use Symfony\Component\HttpFoundation\ParameterBag;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Twig\Environment;
 
-abstract class SmartResponder extends AbstractResponder {
+abstract class SmartResponder extends Responder {
 
 	protected ParameterBag $smart;
 	protected ParameterBag $smartData;
 	protected ParameterBag $smartExtra;
-	protected Environment $twig;
+	protected Environment  $twig;
 
 	protected string $template;
 
 	private readonly SmartResponderEnv $env;
 
 	public function __construct(SmartResponderEnv $env) { $this->env = $env; }
-
-	public function run(): Response|null {
+	public function handle(): Response {
 
 		$_template = Template::get(static::class);
 		$this->template = $_template->template;
@@ -35,13 +33,12 @@ abstract class SmartResponder extends AbstractResponder {
 		$class = $_smart ? $_smart->class : "";
 		$language = $_smart ? $_smart->language : "EN";
 		$title = $_smart ? $_smart->title : "Atomino";
-		$favicon =  $_smart ? $_smart->favicon :"data:;base64,iVBORw0KGgo=";
+		$favicon = $_smart ? $_smart->favicon : "data:;base64,iVBORw0KGgo=";
 
-		$js = array_unique(array_merge(...array_map(fn(JS $js)=>$js->js, JS::all(static::class))));
-		$css = array_unique(array_merge(...array_map(fn(CSS $css)=>$css->css, CSS::all(static::class))));
+		$js = array_unique(array_merge(...array_map(fn(JS $js) => $js->js, JS::all(static::class))));
+		$css = array_unique(array_merge(...array_map(fn(CSS $css) => $css->css, CSS::all(static::class))));
 
-		/** @var Request $originalRequest */
-		$originalRequest = $this->ctx("original-request");
+		$originalRequest = $this->originalRequest;
 		$this->smartData = new ParameterBag();
 		$this->smartExtra = new ParameterBag();
 		$this->smart = new ParameterBag([
@@ -56,10 +53,11 @@ abstract class SmartResponder extends AbstractResponder {
 			"favicon"  => $favicon,
 		]);
 
-		return parent::run();
+		return $this->respond();
 	}
 
 	private function getPublicProperties() { return (new class { public function get($object): array { return get_object_vars($object); } })->get($this); }
+
 
 	protected function render(): Response {
 		$viewModel = $this->getPublicProperties();

@@ -2,41 +2,36 @@
 
 use App\Mission\MissionRouter;
 use Atomino2\Application\ApplicationInterface;
-use Atomino2\Carbonite\Entity;
-use Atomino2\Debug\Debug;
-use Atomino2\ErrorHandler\ErrorCapture;
 use Atomino2\Mercury\FileServer\FileServer;
 use Atomino2\Mercury\HttpRequestLogger;
+use Atomino2\Mercury\Middleware\Cache;
 use Atomino2\Mercury\Middleware\CatchException;
 use Atomino2\Mercury\Middleware\Emitter;
-use Atomino2\Pipeline\PipelineFactoryInterface;
-use DI\Container;
+use Atomino2\Mercury\Middleware\Measure;
+use Atomino2\Mercury\Pipeline\PipeLine;
 use Symfony\Component\HttpFoundation\Request;
 
 class ApplicationHTTP implements ApplicationInterface {
 
 	public function __construct(
-		private readonly Request                  $request,
-		private readonly PipelineFactoryInterface $pipelineFactory,
-		private readonly FileServer|null          $fileServer,
-		private readonly \DebugPipeline|null      $debugPipeline,
-		private readonly HttpRequestLogger|null   $httpRequestLogger,
+		readonly Request                $request,
+		readonly FileServer|null        $fileServer,
+		readonly HttpRequestLogger|null $httpRequestLogger,
+		readonly PipeLine               $pipeLine,
 	) {
-		$this->fileServer
+		$fileServer
 			?->folder("/static/", "/public/")
 			->file("/favicon.ico", "/public/kirk.jpg")
 		;
 
-		$this->httpRequestLogger?->info($this->request);
+		$httpRequestLogger?->info($this->request);
 
-		$this->pipelineFactory
-			->builder()
+		$pipeLine
 			->pipe(Emitter::class)
-			->pipe(CatchException::setup(true))
-			->pipe($this->debugPipeline)
+			->pipe(Measure::class)
+			->pipe(CatchException::class)
+			->pipe(Cache::class)
 			->pipe(MissionRouter::class)
-			->context("request", $this->request)
-			->exec()
-		;
+		($this->request);
 	}
 }

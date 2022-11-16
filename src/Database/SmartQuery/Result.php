@@ -2,7 +2,7 @@
 class Result {
 	/** @var array[] */
 	private array $records = [];
-	private ?int $count = null;
+	private ?int  $count   = null;
 	public function __construct(array $records, ?int $count = null) {
 		$this->count = $count;
 		$this->records = $records;

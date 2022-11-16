@@ -1,7 +1,7 @@
 <?php
 
-use Atomino2\ErrorHandler\ErrorCapture;
-use Atomino2\ErrorHandler\ErrorLogger;
+use Atomino2\Watson\ErrorHandler\ErrorCapture;
+use Atomino2\Watson\ErrorHandler\ErrorLogger;
 use DI\Container;
 use function DI\decorate;
 

@@ -2,12 +2,12 @@
 
 class CompareOperator extends Compare {
 
-	const OPERATOR_GT = ">";
+	const OPERATOR_GT  = ">";
 	const OPERATOR_GTE = ">=";
-	const OPERATOR_LT = "<";
+	const OPERATOR_LT  = "<";
 	const OPERATOR_LTE = "<=";
 
-	private mixed $value;
+	private mixed  $value;
 	private string $operator;
 
 	public function __construct(string $field, mixed $value, string $operator) {
@@ -17,7 +17,7 @@ class CompareOperator extends Compare {
 	}
 
 	public function createSQL(): string {
-		$sql = $this->quoteEntity($this->field) .($this->not ? " NOT ":" "). $this->operator . $this->quoteValue($this->value);
+		$sql = $this->quoteEntity($this->field) . ($this->not ? " NOT " : " ") . $this->operator . $this->quoteValue($this->value);
 		return $sql;
 	}
 }

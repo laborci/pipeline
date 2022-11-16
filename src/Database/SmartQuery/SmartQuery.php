@@ -13,7 +13,7 @@ class SmartQuery {
 	 * @return bool|\PDOStatement
 	 * @throws \Exception
 	 */
-	private function query(string|SqlGeneratorInterface $sql): bool|\PDOStatement {
+	public function query(string|SqlGeneratorInterface $sql): bool|\PDOStatement {
 		$sql = is_string($sql) ? $sql : $sql->getSql($this->connection);
 		return $this->connection->query($sql);
 	}
@@ -22,7 +22,7 @@ class SmartQuery {
 		$row = $this->getRow($sql, ...$args);
 		return $row ? reset($row) : null;
 	}
-	protected function getRow(string $sql, ...$args) { return $this->query(SQL::expr($sql, ...$args))->fetch(\PDO::FETCH_ASSOC) ?: null; }
+	public function getRow(string $sql, ...$args): null|array { return $this->query(SQL::expr($sql, ...$args))->fetch(\PDO::FETCH_ASSOC) ?: null; }
 	public function getRows(string $sql, ...$args): array { return $this->query(SQL::expr($sql, ...$args))->fetchAll(\PDO::FETCH_ASSOC); }
 	public function getValues(string $sql, ...$args): array { return $this->query(SQL::expr($sql, ...$args))->fetchAll(\PDO::FETCH_COLUMN, 0); }
 	public function getValuesWithKey(string $sql, ...$args): array { return $this->query(SQL::expr($sql, ...$args))->fetchAll(\PDO::FETCH_KEY_PAIR); }

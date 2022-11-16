@@ -2,8 +2,8 @@
 
 class PropertyValidationException extends \Exception {
 
-	/** @var string[]  */
-	private readonly array $messages;
+	/** @var string[] */
+	private readonly array  $messages;
 	private readonly string $property;
 	public function getMessages(): array { return $this->messages; }
 	public function getProperty(): string { return $this->property; }

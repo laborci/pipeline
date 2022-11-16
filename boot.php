@@ -1,9 +1,10 @@
 <?php
 
 use Atomino2\Application\ApplicationInterface;
+use Atomino2\Application\Config\Config;
 use Atomino2\Application\PreBootInterface;
-use Atomino2\Debug\Debug;
-use Atomino2\DILoader\DILoader;
+use Atomino2\Watson\Debug\Debug;
+use Atomino2\Application\DILoader\DILoader;
 use Symfony\Component\Dotenv\Dotenv;
 
 include 'vendor/autoload.php';
@@ -22,19 +23,22 @@ function staticInject(string $class, string $property, mixed $value): void {
 	}
 }
 
+class_alias(Config::class, \ApplicationConfig::class);
+
+
 (function (): void {
 	(new Dotenv())
 		->usePutenv()
 		->load(getenv("ROOT") . '/etc/.env')
 	;
 
+	$diCompiledContainer = getenv("DI_COMPILED_CONTAINER") ? (getenv("ROOT") . "/" . getenv("DI_COMPILED_CONTAINER")) : null;
 	$di = (new DILoader())
 		->loadList(getenv("ROOT"), getenv("DI"))
-		->build(getenv("DI_COMPILED_CONTAINER") ? (getenv("ROOT") . "/" . getenv("DI_CC")) : null)
+		->build($diCompiledContainer)
 	;
-
 	if ($di->has(PreBootInterface::class)) $di->get(PreBootInterface::class);
-	$di->get(ApplicationInterface::class);
+	$di->get(PHP_SAPI === 'cli' ? \App\ApplicationCli::class : \App\ApplicationHTTP::class);
 
 })();
 

@@ -4,8 +4,8 @@ use Atomino2\Util\Attr;
 use Attribute;
 
 
-#[Attribute( Attribute::TARGET_CLASS | Attribute::IS_REPEATABLE )]
+#[Attribute(Attribute::TARGET_CLASS | Attribute::IS_REPEATABLE)]
 class JS extends Attr {
 	public array $js;
-	public function __construct(string ...$js){ $this->js = $js; }
+	public function __construct(string ...$js) { $this->js = $js; }
 }

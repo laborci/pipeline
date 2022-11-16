@@ -16,7 +16,6 @@ class IndexPage extends SmartResponder {
 
 
 	public function respond(): Response {
-		$this->userStore::search()->first();
 		$this->friend = "John Lennon";
 		$this->name = "Elvis Presley";
 		return $this->render();

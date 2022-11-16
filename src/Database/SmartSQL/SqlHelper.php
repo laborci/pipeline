@@ -1,7 +1,6 @@
 <?php namespace Atomino2\Database\SmartSQL;
 
 use Atomino2\Database\Connection;
-use Atomino2\Database\SmartSQL\SqlGeneratorInterface;
 
 class SqlHelper {
 	public function __construct(private Connection $connection) { }
@@ -63,6 +62,8 @@ class SqlHelper {
 	 *
 	 * :e - for sql entities
 	 * :v - for values to escape
+	 * :e1, :e2, :e3, etc... - for sql entities at argument position
+	 * :v1, :v2, :v3, etc...  - for values to escape at argument position
 	 * :r - for raw or sqlBuilder value. If value is a dictionary it acts like (:d)
 	 * :esc - for escape value only (without quotes)
 	 * :d(glue=",", pattern=":e=:v") - for dictionaries (field=>value)
@@ -85,7 +86,7 @@ class SqlHelper {
 		if (is_null($sql)) return " ";
 		if (count($arguments) === 0) return $sql;
 
-		$regex = "/(?<=\W|^)(?<!\\\):(e|v|r|esc|d|ds|dk|dv|if|ifn|ifp)(?:\(\s*('.*?(?<!\\\)')\s*\))*(?=\W|$)/";
+		$regex = "/(?<=\W|^)(?<!\\\):(e[0-9]*|v[0-9]*|r|esc|d|ds|dk|dv|if|ifn|ifp)(?:\(\s*('.*?(?<!\\\)')\s*\))*(?=\W|$)/";
 		$found = preg_match_all($regex, $sql, $matches);
 
 		$argIndex = 0;
@@ -97,22 +98,33 @@ class SqlHelper {
 			if ($matches[2][$i]) {
 				$regex = "/(?<=\s|,|^)'(.*?)(?<!\\\)'\s*(?=\s|,|$)/";
 				preg_match_all($regex, $matches[2][$i], $commandArgs);
-				$commandArgs = array_map(fn($arg)=>str_replace("\\'","'", $arg), $commandArgs[1]);
+				$commandArgs = array_map(fn($arg) => str_replace("\\'", "'", $arg), $commandArgs[1]);
+			}
+
+			$fixIndex = null;
+			if (strlen($command) > 1) {
+				if (str_starts_with($command, 'e')) {
+					$fixIndex = intval(substr($command, 1));
+					$command = 'e';
+				} elseif (str_starts_with($command, 'v')) {
+					$fixIndex = intval(substr($command, 1));
+					$command = 'v';
+				}
 			}
 
 			$value = "";
 			switch ($command) {
 				case "e":
-					$arg = $arguments[$argIndex];
+					$arg = $arguments[is_null($fixIndex) ? $argIndex : $fixIndex];
 					[$cGlue] = array_replace([", "], $commandArgs);
 					$value = is_array($arg) ? join($cGlue, array_map(fn($arg) => $this->quoteEntity($arg), $arg)) : $this->quoteEntity($arg);
-					$argIndex++;
+					if(is_null($fixIndex)) $argIndex++;
 					break;
 				case "v":
-					$arg = $arguments[$argIndex];
+					$arg = $arguments[is_null($fixIndex) ? $argIndex : $fixIndex];
 					[$cGlue] = array_replace([", "], $commandArgs);
 					$value = is_array($arg) ? join($cGlue, array_map(fn($arg) => $this->quoteAndEscapeValue($arg), $arg)) : $this->quoteAndEscapeValue($arg);
-					$argIndex++;
+					if(is_null($fixIndex)) $argIndex++;
 					break;
 				case "esc":
 					$arg = $arguments[$argIndex];

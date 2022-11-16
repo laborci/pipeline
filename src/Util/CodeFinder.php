@@ -56,7 +56,7 @@ class CodeFinder {
 			$dirs = glob($path . '*', GLOB_ONLYDIR);
 			foreach ($dirs as $dir) $result = array_merge($result, static::fileSeeker($dir . '/', $pattern));
 		}
-		$result = array_map(fn($path)=>$this->pathResolver->realpath($path), $result);
+		$result = array_map(fn($path) => $this->pathResolver->realpath($path), $result);
 		return $result;
 	}
 

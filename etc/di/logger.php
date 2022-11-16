@@ -2,7 +2,7 @@
 
 
 use Atomino2\Mercury\HttpRequestLogger;
-use Atomino2\ErrorHandler\ErrorLogger;
+use Atomino2\Watson\ErrorHandler\ErrorLogger;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Level;
 use function DI\factory;

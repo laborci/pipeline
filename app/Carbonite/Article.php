@@ -9,7 +9,7 @@ class Article extends __Article {
 
 	protected static function carbonize(): Carbonite {
 		return (new Carbonite(\App\DefaultConnection::class, 'article', true))
-			->relation('author', User::class, 'authorId', 'articles')
+			->relation('author', 'authorId', User::class, 'articles')
 		;
 	}
 }

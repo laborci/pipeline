@@ -1,20 +1,18 @@
 <?php namespace Atomino2\Carbonite\Carbonizer;
 
-use Atomino2\Carbonite\Carbonizer\Access;
-use Atomino2\Carbonite\Carbonizer\Persist;
 use Respect\Validation\ChainedValidator;
 use Respect\Validation\Validator;
 
 abstract class Property {
-	protected string $name;
-	protected int $persist;
-	protected int $access;
-	protected bool $nullable;
-	protected bool $primary;
-	protected bool $virtual;
-	protected mixed $default = null;
-	protected Validator|ChainedValidator|null $validator = null;
-	protected \Closure|null $validatorDecorator = null;
+	protected string                          $name;
+	protected int                             $persist;
+	protected int                             $access;
+	protected bool                            $nullable;
+	protected bool                            $primary;
+	protected bool                            $virtual;
+	protected mixed                           $default            = null;
+	protected Validator|ChainedValidator|null $validator          = null;
+	protected \Closure|null                   $validatorDecorator = null;
 
 	public function isPrimary(): bool { return $this->primary; }
 	public function isNullable(): bool { return $this->nullable; }

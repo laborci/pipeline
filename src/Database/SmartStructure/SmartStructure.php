@@ -9,7 +9,7 @@ class SmartStructure {
 	/** @var Table[] */
 	private ?array $tables = null;
 
-	public function __construct(private Connection $connection) {}
+	public function __construct(private Connection $connection) { }
 
 	public function getTables(): array {
 		if (is_null($this->tables)) {

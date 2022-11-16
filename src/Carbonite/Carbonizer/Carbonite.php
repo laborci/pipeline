@@ -1,12 +1,9 @@
 <?php namespace Atomino2\Carbonite\Carbonizer;
 
-use Atomino2\Carbonite\Carbonizer\Access;
-use Atomino2\Carbonite\Carbonizer\Accessor\Relation;
-use Atomino2\Carbonite\Carbonizer\Persist;
-
 class Carbonite {
-	private array $properties = [];
-	private array $relations  = [];
+	private array     $properties  = [];
+	private array     $relations   = [];
+	private ?\Closure $initializer = null;
 
 	public function getRelations(): array { return $this->relations; }
 
@@ -21,7 +18,7 @@ class Carbonite {
 		return $this;
 	}
 
-	public function relation(string $property, string $target, string $key, string|null $targetProperty = null): static {
+	public function relation(string $property, string $key, string $target, string|null $targetProperty = null): static {
 		$this->relations[$property] = [
 			'property'       => $property,
 			'target'         => $target,
@@ -30,6 +27,12 @@ class Carbonite {
 		];
 		return $this;
 	}
+
+	public function initializer(\Closure $initializer): static {
+		$this->initializer = $initializer;
+		return $this;
+	}
+	public function getInitializer(): ?\Closure { return $this->initializer; }
 
 
 	public function getPropertyPreset(string $name): array {
