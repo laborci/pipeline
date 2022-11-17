@@ -2,9 +2,9 @@
 
 class PatternMatcher {
 
-	const TAILMODE_START = 1;
-	const TAILMODE_END   = 2;
-	const TAILMODE_NONE  = 0;
+	const TAIL_MODE_START = 1;
+	const TAIL_MODE_END   = 2;
+	const TAIL_MODE_NONE  = 0;
 
 	private string|false $tail       = false;
 	private array        $parameters = [];
@@ -13,11 +13,7 @@ class PatternMatcher {
 	public function getTail(): bool|string { return $this->tail; }
 	public function getParameters(): array { return $this->parameters; }
 
-	public function __construct(
-		string $separator,
-		string $pattern,
-		int    $tailMode = 0,
-	) {
+	public function __construct(string $separator, string $pattern, int $tailMode = 0,) {
 		$this->regex = $this->parsePattern($separator, $pattern, $tailMode);
 	}
 
@@ -27,8 +23,8 @@ class PatternMatcher {
 		$segments = explode($separator, trim($pattern, $separator));
 
 		$tail = false;
-		if ($tailmode === self::TAILMODE_END && $tail = end($segments) == '**') array_pop($segments);
-		elseif ($tailmode === self::TAILMODE_START && $tail = reset($segments) == '**') array_shift($segments);
+		if ($tailmode === self::TAIL_MODE_END && $tail = end($segments) == '**') array_pop($segments);
+		elseif ($tailmode === self::TAIL_MODE_START && $tail = reset($segments) == '**') array_shift($segments);
 		if (count($segments) === 0 && $tail) return "%^(?'__TAIL__'.*)$%";
 
 		$segmentRegexes = [];
@@ -36,9 +32,9 @@ class PatternMatcher {
 		$segmentRegex = join(preg_quote($separator), $segmentRegexes);
 
 		return '%^/*' .
-			($tail && $tailmode === self::TAILMODE_START ? $tailRegex : "") .
+			($tail && $tailmode === self::TAIL_MODE_START ? $tailRegex : "") .
 			$segmentRegex .
-			($tail && $tailmode === self::TAILMODE_END ? $tailRegex : "") .
+			($tail && $tailmode === self::TAIL_MODE_END ? $tailRegex : "") .
 			'/*$%';
 	}
 

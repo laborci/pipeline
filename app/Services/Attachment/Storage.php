@@ -2,6 +2,7 @@
 
 use App\Services\Attachment\Constants\TableLink;
 use App\Services\Attachment\Constants\TableStorage;
+use App\Services\Attachment\Img\ImgFactory;
 use Atomino2\Carbonite\Entity;
 use Atomino2\Carbonite\Event\OnDelete;
 use Atomino2\Database\Connection;
@@ -17,20 +18,41 @@ class Storage {
 
 
 	/** @var Collection[] */
-	private array $collections = [];
-	public function getConnection(): Connection { return $this->connection; }
-	public function getLinkTable(): string { return $this->linkTable; }
+	private array              $collections = [];
+	public readonly Connection $connection;
+	public readonly ImgFactory $imgFactory;
+	public readonly string     $url;
+	public readonly string     $linkTable;
+	public readonly string     $attachmentTable;
+	private readonly string    $storageTable;
+	private readonly string    $path;
 	public function getAttachmentTable(): string { return $this->attachmentTable; }
 
-	public function __construct(EventDispatcher $eventDispatcher, private string $path, private Connection $connection, private string $storageTable, private string $linkTable, private string $attachmentTable) {
+	public function __construct(
+		EventDispatcher $eventDispatcher,
+		Connection      $connection,
+		ImgFactory      $imgFactory,
+		string          $url,
+		string          $path,
+		string          $storageTable,
+		string          $linkTable,
+		string          $attachmentTable
+	) {
+		$this->imgFactory = $imgFactory;
+		$this->url = $url;
+		$this->attachmentTable = $attachmentTable;
+		$this->linkTable = $linkTable;
+		$this->storageTable = $storageTable;
+		$this->connection = $connection;
+		$this->path = $path;
 		$eventDispatcher->addListener(OnDelete::class, fn(OnDelete $event) => $this->onDelete($event));
 	}
 
 	private function onDelete(OnDelete $event) { foreach ($this->getCollections(get_class($event->getItem())) as $collection) $collection->getHandler($event->getItem())->purge(); }
 
 	public function addCollection(Collection $collection): static {
-		if (array_key_exists($collection->getUid(), $this->collections)) throw new \Exception("Collection id must be a unique");
-		$this->collections[$collection->getUid()] = $collection;
+		if (array_key_exists($collection->uid, $this->collections)) throw new \Exception("Collection id must be a unique");
+		$this->collections[$collection->uid] = $collection;
 		$collection->setStorage($this);
 		return $this;
 	}
@@ -98,8 +120,13 @@ class Storage {
 		return new StoredFile($fileRecord, $this);
 	}
 
-	public function setStoredFileTags(int $id, array|null $tags): void { $this->connection->getSmartQuery()->updateById($this->storageTable, $id, ['tags' => json_encode($tags)]); }
-	public function setStoredFileDescription(int $id, string|null $description): void { $this->connection->getSmartQuery()->updateById($this->storageTable, $id, ['description' => $description]); }
+	public function saveStoredFile(int $id, string|null $description, array|null $tags): void {
+		$this->connection->getSmartQuery()->updateById(
+			$this->storageTable,
+			$id,
+			[TableStorage::TAGS => json_encode($tags), TableStorage::DESCRIPTION => $description]
+		);
+	}
 
 	public function idToFullPath(int $id): string { return $this->path . '/' . $this->idToRealPath($id); }
 	public function idToRealPath(int $id): string { return wordwrap(substr(str_pad($id, 9, '0', STR_PAD_LEFT), 0, -3), 3, '/', true); }

@@ -34,14 +34,14 @@ abstract class Router extends Handler {
 	}
 
 	private function hostMatch(string $pattern): bool {
-		$matcher = new PatternMatcher('.', $pattern, PatternMatcher::TAILMODE_NONE);
+		$matcher = new PatternMatcher('.', $pattern, PatternMatcher::TAIL_MODE_NONE);
 		$result = $matcher->match($this->request->getHost());
 		if ($result) $this->hostArgs->add($matcher->getParameters());
 		return $result;
 	}
 
 	private function pathMatch(string $pattern): bool {
-		$matcher = new PatternMatcher('/', $pattern, PatternMatcher::TAILMODE_END);
+		$matcher = new PatternMatcher('/', $pattern, PatternMatcher::TAIL_MODE_END);
 		$result = $matcher->match(trim($this->request->getPathInfo(), '/'));
 		if ($result) {
 			$this->pathArgs->add($matcher->getParameters());

@@ -9,12 +9,10 @@ class Collection {
 	private readonly string  $owner;
 	private readonly ?int    $maxFileSize;
 	private readonly ?int    $maxFileCount;
-	private readonly Storage $storage;
-	private readonly int     $uid;
+	public readonly Storage $storage;
+	public readonly int     $uid;
 	private array            $handlerCache = [];
 
-	public function getStorage(): Storage { return $this->storage; }
-	public function getUid(): int { return $this->uid; }
 	public function setStorage(Storage $storage): void { $this->storage = $storage; }
 	public function getOwner(): string { return $this->owner; }
 	public function getName(): string { return $this->name; }

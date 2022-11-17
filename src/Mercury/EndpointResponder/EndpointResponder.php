@@ -24,7 +24,7 @@ class EndpointResponder extends Handler {
 	}
 
 	private function pathMatch(string $pattern): bool {
-		$matcher = new PatternMatcher('/', $pattern, PatternMatcher::TAILMODE_END);
+		$matcher = new PatternMatcher('/', $pattern, PatternMatcher::TAIL_MODE_END);
 		$result = $matcher->match(trim($this->request->getPathInfo(), '/'));
 		if ($result) $this->pathArgs->add($matcher->getParameters());
 		return $result;

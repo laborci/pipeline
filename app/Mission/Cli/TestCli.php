@@ -27,21 +27,18 @@ class TestCli extends CliModule {
 		$command->define(function (Input $input, Output $output, Style $style) {
 			$user = $this->userStore->pick(1);
 			//debug($user->avatar->first->setTitle('FASZA'));
-			debug($user->avatar->get(52));
-			debug(1<<1);
-			debug(1<<2);
-			debug(1<<3);
+			debug($user->avatar->first->img?->crop(132, 332)->hires(1)->webp);
 
-			try {
-				$user->avatar->addFile(new File(__DIR__ . '/szkoko.pdf'));
-			} catch (AttachmentException $exception) {
-				debug($exception->getMessage());
-			}
-			try {
-				$user->avatar->addFile(new File(__DIR__ . '/avatar.jpg'));
-			} catch (AttachmentException $exception) {
-				debug($exception->getMessage());
-			}
+//			try {
+//				$user->avatar->addFile(new File(__DIR__ . '/szkoko.pdf'));
+//			} catch (AttachmentException $exception) {
+//				debug($exception->getMessage());
+//			}
+//			try {
+//				$user->avatar->addFile(new File(__DIR__ . '/avatar.jpg'));
+//			} catch (AttachmentException $exception) {
+//				debug($exception->getMessage());
+//			}
 
 //			$user->avatar->first->img
 

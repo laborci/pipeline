@@ -1,6 +1,8 @@
 <?php namespace App;
 
 use App\Mission\MissionRouter;
+use App\Services\Attachment\Img\ImgFileResolver;
+use App\Services\Attachment\StoredFileResolver;
 use Atomino2\Application\ApplicationInterface;
 use Atomino2\Mercury\FileServer\FileServer;
 use Atomino2\Mercury\HttpRequestLogger;
@@ -18,13 +20,17 @@ class ApplicationHTTP implements ApplicationInterface {
 		readonly FileServer|null        $fileServer,
 		readonly HttpRequestLogger|null $httpRequestLogger,
 		readonly PipeLine               $pipeLine,
+		readonly StoredFileResolver     $storedFileResolver,
+		readonly ImgFileResolver        $imgFileResolver
 	) {
 		$fileServer
-			?->folder("/static/", "/public/")
+			?->folder("/~static/", "/public/")
 			->file("/favicon.ico", "/public/kirk.jpg")
+			->resolver($storedFileResolver)
+			->resolver($imgFileResolver)
 		;
 
-		$httpRequestLogger?->info($this->request);
+		$httpRequestLogger?->info($request);
 
 		$pipeLine
 			->pipe(Emitter::class)
@@ -32,6 +38,6 @@ class ApplicationHTTP implements ApplicationInterface {
 			->pipe(CatchException::class)
 			->pipe(Cache::class)
 			->pipe(MissionRouter::class)
-		($this->request);
+		($request);
 	}
 }

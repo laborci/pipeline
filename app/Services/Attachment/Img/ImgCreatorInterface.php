@@ -1,4 +1,4 @@
-<?php namespace Atomino\Bundle\Attachment\Img;
+<?php namespace App\Services\Attachment\Img;
 
 interface ImgCreatorInterface {
 	public function getDimensions($file): array;
