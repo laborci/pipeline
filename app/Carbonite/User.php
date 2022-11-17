@@ -1,6 +1,5 @@
 <?php namespace App\Carbonite;
 
-use App\Bundle\Attachment\AttachmentHandler;
 use App\Carbonite\Machine\__User;
 use App\DefaultConnection;
 use App\Services\Attachment\Collection;

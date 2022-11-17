@@ -12,7 +12,5 @@ class PreBoot implements PreBootInterface {
 		Container         $di,
 		ErrorCapture|null $errorHandler,
 		Debug|null        $debug
-	) {
-
-	}
+	) {	}
 }

@@ -22,9 +22,9 @@ class User extends EndpointResponder {
 		]);
 	}
 
-	#[Endpoint("/goodbye/:name")]
+	#[Endpoint("/goodbye/:?name")]
 	protected function sayGoodBye(): Response {
-		return new Response("GoodBye " . $this->pathArgs->get("name"));
+		return new Response("GoodBye " . $this->pathArgs->get("name", "LAJOS"));
 	}
 
 }

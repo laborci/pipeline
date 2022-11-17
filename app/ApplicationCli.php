@@ -16,4 +16,3 @@ class ApplicationCli implements ApplicationInterface {
 		$application->run();
 	}
 }
-
