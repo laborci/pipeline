@@ -1,9 +1,13 @@
 <?php namespace App\Services\Attachment;
 
 
+use App\Services\Attachment\Constants\TableLink;
 use Atomino2\Carbonite\Entity;
 use Atomino2\Database\Connection;
 use Atomino2\Database\SmartSQL\SQL;
+use Atomino2\Util\Geometry\Dimension;
+use Atomino2\Util\Geometry\Point;
+use Atomino2\Util\Geometry\Rectangle;
 use JetBrains\PhpStorm\Deprecated;
 use Symfony\Component\HttpFoundation\File\File;
 
@@ -18,14 +22,6 @@ use Symfony\Component\HttpFoundation\File\File;
  * @property-read int $maxSize = 0,
  */
 class CollectionHandler implements \Countable, \IteratorAggregate, \ArrayAccess {
-
-	const ID            = 'id';
-	const COLLECTION_ID = 'collectionId';
-	const STORAGE_ID    = 'storageId';
-	const OWNER_ID      = 'ownerId';
-	const POSITION      = 'position';
-	const TITLE         = 'title';
-	const IMG           = 'img';
 
 	private Connection $connection;
 	private string     $linkTable;
@@ -64,8 +60,8 @@ class CollectionHandler implements \Countable, \IteratorAggregate, \ArrayAccess 
 			$rows = $this->connection->getSmartQuery()->getRows(SQL::expr(
 				"SELECT * FROM :e WHERE :d('AND') ORDER BY :e",
 				$this->attachmentTable,
-				[self::COLLECTION_ID => $this->collectionId, self::OWNER_ID => $this->itemId],
-				self::POSITION
+				[TableLink::COLLECTION_ID => $this->collectionId, TableLink::OWNER_ID => $this->itemId],
+				TableLink::POSITION
 			)->getSQL($this->connection));
 			foreach ($rows as $row) {
 				$attachment = new Attachment($this, $row);
@@ -86,12 +82,23 @@ class CollectionHandler implements \Countable, \IteratorAggregate, \ArrayAccess 
 		if (is_int($file)) $file = $this->collection->getStorage()->get($file);
 		if (is_null($file)) throw new AttachmentException("File to be linked is not exists");
 		$this->validateFile($file);
-		$this->connection->getSmartQuery()->insert($this->linkTable, [
-			self::COLLECTION_ID => $this->collectionId,
-			self::STORAGE_ID    => $file->getId(),
-			self::OWNER_ID      => $this->itemId,
-			self::POSITION      => $this->count(),
-		], true);
+		if ($file->isImage()) {
+			$dim = $file->getDimensions();
+			$crop = null;
+			$transform = 0;
+			$safeZone = new Rectangle(new Point(0, 0), $dim);
+			$focus = new Point(floor($dim->width / 2), floor($dim->height / 2));
+		}
+		$this->connection->getSmartQuery()->insert(
+			$this->linkTable,
+			[
+				TableLink::COLLECTION_ID => $this->collectionId,
+				TableLink::STORAGE_ID    => $file->getId(),
+				TableLink::OWNER_ID      => $this->itemId,
+				TableLink::POSITION      => $this->count(),
+				TableLink::IMG           => json_encode(compact('crop', 'transform', 'safeZone', 'focus')),
+			],
+			true);
 	}
 
 	/**
@@ -146,8 +153,8 @@ class CollectionHandler implements \Countable, \IteratorAggregate, \ArrayAccess 
 		$this->connection->query(
 			SQL::expr("UPDATE :e SET :e = CASE :e :d('', 'WHEN :v THEN :v') END WHERE :r",
 				$this->linkTable,
-				self::POSITION,
-				self::ID,
+				TableLink::POSITION,
+				TableLink::ID,
 				$map,
 				SQL::cmp('id', ...array_keys($map))
 			)->getSQL($this->connection)
@@ -166,13 +173,13 @@ class CollectionHandler implements \Countable, \IteratorAggregate, \ArrayAccess 
 	}
 	public function setAttachmentTitle(int $id, null|string $title) {
 		if (!is_null($this->get($id))) {
-			$this->connection->getSmartQuery()->updateById($this->linkTable, $id, [self::TITLE => $title]);
+			$this->connection->getSmartQuery()->updateById($this->linkTable, $id, [TableLink::TITLE => $title]);
 			$this->getAttachments(true);
 		}
 	}
 	public function setAttachmentImg(int $id, null|array $img) {
 		if (!is_null($this->get($id))) {
-			$this->connection->getSmartQuery()->updateById($this->linkTable, $id, [self::IMG => json_encode($img)]);
+			$this->connection->getSmartQuery()->updateById($this->linkTable, $id, [TableLink::IMG => json_encode($img)]);
 			$this->getAttachments(true);
 		}
 	}

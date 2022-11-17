@@ -27,6 +27,11 @@ class TestCli extends CliModule {
 		$command->define(function (Input $input, Output $output, Style $style) {
 			$user = $this->userStore->pick(1);
 			//debug($user->avatar->first->setTitle('FASZA'));
+			debug($user->avatar->get(52));
+			debug(1<<1);
+			debug(1<<2);
+			debug(1<<3);
+
 			try {
 				$user->avatar->addFile(new File(__DIR__ . '/szkoko.pdf'));
 			} catch (AttachmentException $exception) {
@@ -37,6 +42,8 @@ class TestCli extends CliModule {
 			} catch (AttachmentException $exception) {
 				debug($exception->getMessage());
 			}
+
+//			$user->avatar->first->img
 
 			//$user->avatar->setAttachmentTitle(2, 'Ez a kép');
 //			$handler = $this->storage->getCollectionHandler($user, 'avatar');

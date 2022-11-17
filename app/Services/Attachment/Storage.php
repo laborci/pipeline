@@ -1,15 +1,20 @@
 <?php namespace App\Services\Attachment;
 
+use App\Services\Attachment\Constants\TableLink;
+use App\Services\Attachment\Constants\TableStorage;
 use Atomino2\Carbonite\Entity;
 use Atomino2\Carbonite\Event\OnDelete;
 use Atomino2\Database\Connection;
 use Atomino2\Database\SmartSQL\SQL;
+use Atomino2\Util\Geometry\Dimension;
+use Atomino2\Util\Geometry\Transform;
 use Cocur\Slugify\Slugify;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class Storage {
+
 
 	/** @var Collection[] */
 	private array $collections = [];
@@ -20,7 +25,6 @@ class Storage {
 	public function __construct(EventDispatcher $eventDispatcher, private string $path, private Connection $connection, private string $storageTable, private string $linkTable, private string $attachmentTable) {
 		$eventDispatcher->addListener(OnDelete::class, fn(OnDelete $event) => $this->onDelete($event));
 	}
-
 
 	private function onDelete(OnDelete $event) { foreach ($this->getCollections(get_class($event->getItem())) as $collection) $collection->getHandler($event->getItem())->purge(); }
 
@@ -44,34 +48,41 @@ class Storage {
 		}
 		return null;
 	}
+
 	public function get(int $id): ?StoredFile {
-		$row = $this->connection->getSmartQuery()->getRow(SQL::expr("SELECT * FROM :e WHERE :e=:v", $this->storageTable, 'id', $id)->getSQL($this->connection));
-		if(is_null($row)) return null;
+		$row = $this->connection->getSmartQuery()->getRow(SQL::expr("SELECT * FROM :e WHERE :e=:v", $this->storageTable, TableStorage::ID, $id)->getSQL($this->connection));
+		if (is_null($row)) return null;
 		return new StoredFile($row, $this);
 	}
+
 	public function addFile(File $file): ?StoredFile {
 		$hash = hexdec(hash_file('crc32', $file->getRealPath()));
 		$size = $file->getSize();
 
-		$fileRecord = $this->connection->getSmartQuery()->getRow(SQL::expr("SELECT * FROM :e WHERE :e=:v AND size=:v", $this->storageTable, 'hash', $hash, $size)->getSQL($this->connection));
+		$fileRecord = $this->connection->getSmartQuery()->getRow(SQL::expr("SELECT * FROM :e WHERE :d('AND')", $this->storageTable, [TableStorage::HASH => $hash, TableStorage::SIZE => $size])->getSQL($this->connection));
 		if (is_null($fileRecord)) {
 			$slugify = new Slugify();
 			$filename = $slugify->slugify(pathinfo($file->getFilename(), PATHINFO_FILENAME)) . '.' . strtolower($file->getExtension());
 			$mimeType = $file->getMimeType();
 			if (str_starts_with($mimeType, 'image/')) {
+				$transform = 0;
+				if (exif_imagetype($file) === IMAGETYPE_JPEG) {
+					$exif = @exif_read_data($file->getRealPath());
+					if (!empty($exif['Orientation'])) $transform = Transform::EXIF[$exif['Orientation']];
+				}
 				[$width, $height] = getimagesize($file->getRealPath());
-				$imageDimensions = json_encode(["width" => $width, "height" => $height]);
+				$image = json_encode([TableStorage::IMAGE_SIZE => Dimension::fromArray([Dimension::WIDTH => $width, Dimension::HEIGHT => $height]), TableStorage::IMAGE_TRANSFORM => $transform]);
 			} else {
-				$imageDimensions = null;
+				$image = null;
 			}
 			$id = $this->connection->getSmartQuery()->insert($this->storageTable, [
-				'file'            => $filename,
-				'size'            => $size,
-				'mimeType'        => $mimeType,
-				'hash'            => $hash,
-				'imageDimensions' => $imageDimensions,
-				'tags'            => null,
-				'description'     => null,
+				TableStorage::FILE        => $filename,
+				TableStorage::SIZE        => $size,
+				TableStorage::MIME_TYPE   => $mimeType,
+				TableStorage::HASH        => $hash,
+				TableStorage::IMAGE       => $image,
+				TableStorage::TAGS        => null,
+				TableStorage::DESCRIPTION => null,
 			]);
 
 			$path = $this->idToFullPath($id);
@@ -95,7 +106,7 @@ class Storage {
 	public function idToLogicalPath(int $id): string { return wordwrap(str_pad($id, 9, '0', STR_PAD_LEFT), 3, '/', true); }
 	public function idToPrefix(int $id): string { return substr(str_pad($id, 3, '0', STR_PAD_LEFT), -3); }
 	public function delete(mixed $storageId): void {
-		$count = $this->connection->getSmartQuery()->getValue(SQL::expr("SELECT count(:e) FROM :e WHERE :e=:v", 'id', $this->linkTable, 'storageId', $storageId)->getSQL($this->connection));
+		$count = $this->connection->getSmartQuery()->getValue(SQL::expr("SELECT count(:e) FROM :e WHERE :e=:v", TableLink::ID, $this->linkTable, TableLink::STORAGE_ID, $storageId)->getSQL($this->connection));
 		if ($count === 0) {
 			$file = $this->get($storageId);
 			$this->connection->getSmartQuery()->deleteById($this->storageTable, $storageId);
@@ -103,15 +114,3 @@ class Storage {
 		}
 	}
 }
-
-
-
-//$handler = new CollectionHandler();
-//
-//$handler->addFile(File);
-//
-///** Attachment */
-//$handler->first;
-//$handler[1];
-//
-//$handler->first->moveToPosition(4);

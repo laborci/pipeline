@@ -30,6 +30,7 @@
         "respect/validation": "^2.2",
         "symfony/console": "^6.1",
         "symfony/event-dispatcher": "^6.1",
-        "cocur/slugify": "^4.2"
+        "cocur/slugify": "^4.2",
+		"ext-exif": "*"
 	}
 }
