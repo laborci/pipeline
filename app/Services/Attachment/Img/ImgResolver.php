@@ -12,13 +12,15 @@ class ImgResolver {
 		$passwordCheck = base_convert(crc32($id . '/' . join('/', $operations) . '/' . $this->secret . '/' . $file), 10, 36);
 		if ($passwordCheck !== $password) return false;
 
-		$op = [Img::OP_RES => 1, Img::OP_QUALITY => 80, Img::OP_FOCUS => null, Img::OP_SAFE_ZONE => null, Img::OP_TRANSFORM => 0];
+		$op = [Img::OP_RES => 1, Img::OP_QUALITY => 80, Img::OP_FOCUS => null, Img::OP_SAFE_ZONE => null, Img::OP_TRANSFORM => 0, Img::OP_PRE_CUT => null];
 		foreach ($operations as $operation) {
 			$code = substr($operation, 0, 1);
 			$args = substr($operation, 1);
 			$op[$code] = $args;
 		}
 
+		$preCut = $op[Img::OP_PRE_CUT];
+		unset($op[Img::OP_PRE_CUT]);
 		$transform = $op[Img::OP_TRANSFORM];
 		unset($op[Img::OP_TRANSFORM]);
 		$res = $op[Img::OP_RES];
@@ -39,11 +41,11 @@ class ImgResolver {
 		$safeZone = is_null($safeZone) ? null : array_map(fn(string $val) => base_convert($val, 36, 10), explode('.', $safeZone));
 
 		return match ($operation) {
-			Img::OP_CROP   => $this->creator->crop($arguments[0], $arguments[1], $source, $target, $transform, $quality, $safeZone, $focus),
-			Img::OP_WIDTH  => $this->creator->width($arguments[0], $arguments[1], $source, $target, $transform, $quality, $safeZone, $focus),
-			Img::OP_HEIGHT => $this->creator->height($arguments[0], $arguments[1], $source, $target, $transform, $quality, $safeZone, $focus),
-			Img::OP_SCALE  => $this->creator->scale($arguments[0], $arguments[1], $source, $target, $transform, $quality),
-			IMG::OP_BOX    => $this->creator->box($arguments[0], $arguments[1], $source, $target, $transform, $quality),
+			Img::OP_CROP   => $this->creator->crop($arguments[0], $arguments[1], $source, $target, $preCut, $transform, $quality, $safeZone, $focus),
+			Img::OP_WIDTH  => $this->creator->width($arguments[0], $arguments[1], $source, $target, $preCut, $transform, $quality, $safeZone, $focus),
+			Img::OP_HEIGHT => $this->creator->height($arguments[0], $arguments[1], $source, $target, $preCut, $transform, $quality, $safeZone, $focus),
+			Img::OP_SCALE  => $this->creator->scale($arguments[0], $arguments[1], $source, $target, $preCut, $transform, $quality),
+			IMG::OP_BOX    => $this->creator->box($arguments[0], $arguments[1], $source, $target, $preCut, $transform, $quality),
 			default        => false,
 		};
 	}

@@ -21,6 +21,7 @@ class Img {
 	const OP_SAFE_ZONE = 'z';
 	const OP_RES       = 'x';
 	const OP_TRANSFORM = 't';
+	const OP_PRE_CUT   = 'p';
 
 	private string $url;
 
@@ -84,6 +85,7 @@ class Img {
 	private function img(string $ext, ?int $quality = null): string {
 		$this->operations = array_merge($this->operation, $this->operations);
 		if (!is_null($transform = $this->attachment->transform) && $transform !== 0) $this->operations[self::OP_TRANSFORM] = $transform;
+		if (!is_null($preCut = $this->attachment->crop)) $this->operations[self::OP_PRE_CUT] = $this->b36($preCut->x, $preCut->y, $preCut->width, $preCut->height);
 		if (!is_null($safeZone = $this->attachment->safeZone)) $this->operations[self::OP_SAFE_ZONE] = $this->b36($safeZone->x, $safeZone->y, $safeZone->width, $safeZone->height);
 		if (!is_null($focus = $this->attachment->focus)) $this->operations[self::OP_FOCUS] = $this->b36($focus->x, $focus->y);
 		if (is_int($quality)) $this->operations[self::OP_QUALITY] = min(max($quality, 0), 100);

@@ -7,6 +7,6 @@ use DI\Container;
 use function DI\factory;
 
 return [
-	Carbonizer::class => factory(fn(Container $di, CodeFinder $codeFinder, PathResolver $pathResolver)=> new Carbonizer($di, $codeFinder, $pathResolver, \App\Carbonite::class, \App\Carbonite\Store::class, \App\Carbonite\Machine::class))
+	Carbonizer::class => factory(fn(Container $di, CodeFinder $codeFinder, PathResolver $pathResolver) => new Carbonizer($di, $codeFinder, $pathResolver, \App\Carbonite::class, \App\Carbonite\Store::class, \App\Carbonite\Machine::class)),
 ];
 

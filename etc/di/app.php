@@ -19,6 +19,5 @@ return [
 	\Atomino2\Watson\Debug\Debug::class => null,
 	PreBootInterfaceAlias::class        => get(PreBoot::class),
 	ClassLoader::class                  => factory(fn(PathResolver $pathResolver) => require $pathResolver('vendor/autoload.php')),
-
 ];
 

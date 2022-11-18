@@ -4,8 +4,8 @@ use Atomino2\Util\Geometry\Transform;
 
 class ImgCreatorGD2 {
 
-	public function crop(int $width, int $height, string $source, string $target, int $transform, int|null $jpegQuality, array|null $safeZone, array|null $focus): bool {
-		if (is_null($img = $this->loadImage($source, $transform))) return false;
+	public function crop(int $width, int $height, string $source, string $target, null|array $preCut, int $transform, int|null $jpegQuality, array|null $safeZone, array|null $focus): bool {
+		if (is_null($img = $this->loadImage($source, $transform, $preCut))) return false;
 
 		$oAspect = imagesx($img) / imagesy($img);
 		$aspect = $width / $height;
@@ -18,8 +18,8 @@ class ImgCreatorGD2 {
 		return $this->saveImage($target, $img, $jpegQuality);
 	}
 
-	public function height(int $width, int $height, string $source, string $target, int $transform, int|null $jpegQuality, array|null $safeZone, array|null $focus): bool {
-		if (is_null($img = $this->loadImage($source, $transform))) return false;
+	public function height(int $width, int $height, string $source, string $target, null|array $preCut, int $transform, int|null $jpegQuality, array|null $safeZone, array|null $focus): bool {
+		if (is_null($img = $this->loadImage($source, $transform, $preCut))) return false;
 
 		$oAspect = imagesx($img) / imagesy($img);
 		$ratio = imagesy($img) / $height;
@@ -28,8 +28,8 @@ class ImgCreatorGD2 {
 
 		return $this->saveImage($target, $img, $jpegQuality);
 	}
-	public function width(int $width, int $height, string $source, string $target, int $transform, int|null $jpegQuality, array|null $safeZone, array|null $focus): bool {
-		if (is_null($img = $this->loadImage($source, $transform))) return false;
+	public function width(int $width, int $height, string $source, string $target, null|array $preCut, int $transform, int|null $jpegQuality, array|null $safeZone, array|null $focus): bool {
+		if (is_null($img = $this->loadImage($source, $transform, $preCut))) return false;
 
 		$oAspect = imagesx($img) / imagesy($img);
 		$ratio = imagesx($img) / $width;
@@ -39,8 +39,8 @@ class ImgCreatorGD2 {
 		return $this->saveImage($target, $img, $jpegQuality);
 	}
 
-	public function box(int $width, int $height, string $source, string $target, int $transform, int|null $jpegQuality): bool {
-		if (is_null($img = $this->loadImage($source, $transform))) return false;
+	public function box(int $width, int $height, string $source, null|array $preCut, string $target, int $transform, int|null $jpegQuality): bool {
+		if (is_null($img = $this->loadImage($source, $transform, $preCut))) return false;
 		$aspect = $width / $height;
 		$oAspect = imagesx($img) / imagesy($img);
 		if ($aspect < $oAspect) $height = $width / $oAspect;
@@ -49,13 +49,13 @@ class ImgCreatorGD2 {
 		return $this->saveImage($target, $img, $jpegQuality);
 	}
 
-	public function scale(int $width, int $height, string $source, string $target, int $transform, int|null $jpegQuality): bool {
-		if (is_null($img = $this->loadImage($source, $transform))) return false;
+	public function scale(int $width, int $height, string $source, string $target, null|array $preCut, int $transform, int|null $jpegQuality): bool {
+		if (is_null($img = $this->loadImage($source, $transform, $preCut))) return false;
 		$img = $this->doResize($img, (int)$width, (int)$height);
 		return $this->saveImage($target, $img, $jpegQuality);
 	}
 
-	private function loadImage(string $source, int $transform): \GdImage|null {
+	private function loadImage(string $source, int $transform, $preCut): \GdImage|null {
 		$img = match (exif_imagetype($source)) {
 			IMAGETYPE_GIF  => imagecreatefromgif($source),
 			IMAGETYPE_JPEG => imagecreatefromjpeg($source),
@@ -70,6 +70,7 @@ class ImgCreatorGD2 {
 			if (array_key_exists('Orientation', $exif) && !empty($orientation = $exif['Orientation'])) $img = $this->transform($img, Transform::REVERSE[Transform::EXIF[$orientation]]);
 		}
 		$img = $this->transform($img, $transform);
+		$img = $this->cut($img, $preCut);
 		return $img;
 	}
 
@@ -99,6 +100,16 @@ class ImgCreatorGD2 {
 		$oHeight = imagesy($img);
 		imagefill($newImg, 0, 0, imagecolorallocatealpha($newImg, 0, 0, 0, 127));
 		imagecopyresampled($newImg, $img, 0, 0, 0, 0, $width, $height, $oWidth, $oHeight);
+		imagedestroy($img);
+		return $newImg;
+	}
+
+	private function cut(\GdImage $img, null|array $precut){
+		if(is_null($precut)) return $img;
+		[$x, $y, $width, $height] = $precut;
+		$newImg = imageCreateTrueColor($width, $height);
+		imagefill($newImg, 0, 0, imagecolorallocatealpha($newImg, 0, 0, 0, 127));
+		imagecopyresampled($newImg, $img, 0, 0, $x, $y, $width, $height, $width, $height);
 		imagedestroy($img);
 		return $newImg;
 	}
