@@ -2,9 +2,9 @@
 
 use App\Carbonite\Machine\__User;
 use App\DefaultConnection;
-use App\Services\Attachment\Collection;
-use App\Services\Attachment\CollectionHandler;
-use App\Services\Attachment\Storage;
+use Atomino2\Attachment\Collection;
+use Atomino2\Attachment\CollectionHandler;
+use Atomino2\Attachment\Storage;
 use Atomino2\Carbonite\Carbonizer\Access;
 use Atomino2\Carbonite\Carbonizer\Carbonite;
 use Atomino2\Carbonite\Event\BeforeInsert;

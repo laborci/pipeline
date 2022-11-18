@@ -1,4 +1,4 @@
-<?php namespace App\Services\Attachment;
+<?php namespace Atomino2\Attachment;
 class AttachmentException extends \Exception {
 
 }
