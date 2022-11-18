@@ -1,4 +1,4 @@
-<?php namespace App\Services\Attachment\Constants;
+<?php namespace Atomino2\Attachment\Constants;
 interface TableStorage {
 	const ID              = 'id';
 	const FILE            = 'file';

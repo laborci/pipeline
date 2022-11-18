@@ -1,11 +1,11 @@
-<?php namespace App\Services\Attachment;
+<?php namespace Atomino2\Attachment;
 
 
-use App\Services\Attachment\Constants\TableLink;
 use Atomino2\Carbonite\Entity;
 use Atomino2\Database\Connection;
 use Atomino2\Database\SmartSQL\SQL;
 use JetBrains\PhpStorm\Deprecated;
+use Atomino2\Attachment\Constants\TableLink;
 use Symfony\Component\HttpFoundation\File\File;
 
 

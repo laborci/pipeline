@@ -1,6 +1,4 @@
-<?php namespace App\Services\Attachment\Img;
-
-use JetBrains\PhpStorm\ArrayShape;
+<?php namespace Atomino2\Attachment\Img;
 
 class ImgResolver {
 

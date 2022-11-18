@@ -1,11 +1,11 @@
 <?php use App\DefaultConnection;
-use App\Services\Attachment\Img\ImgCreatorGD2;
-use App\Services\Attachment\Img\ImgFactory;
-use App\Services\Attachment\Img\ImgFileResolver;
-use App\Services\Attachment\Img\ImgResolver;
-use App\Services\Attachment\Storage;
-use App\Services\Attachment\StoredFileResolver;
 use DI\Container;
+use Atomino2\Attachment\Img\ImgCreatorGD2;
+use Atomino2\Attachment\Img\ImgFactory;
+use Atomino2\Attachment\Img\ImgFileResolver;
+use Atomino2\Attachment\Img\ImgResolver;
+use Atomino2\Attachment\Storage;
+use Atomino2\Attachment\StoredFileResolver;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use function DI\factory;
 

@@ -1,7 +1,6 @@
-<?php namespace App\Services\Attachment\Img;
+<?php namespace Atomino2\Attachment\Img;
 
 use Atomino2\Mercury\FileServer\FileResolverInterface;
-use Atomino2\Util\PathResolver;
 use DI\Container;
 
 class ImgFileResolver implements FileResolverInterface {

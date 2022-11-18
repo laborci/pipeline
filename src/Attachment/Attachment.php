@@ -1,11 +1,11 @@
-<?php namespace App\Services\Attachment;
+<?php namespace Atomino2\Attachment;
 
-use App\Services\Attachment\Constants\TableLink;
-use App\Services\Attachment\Constants\TableStorage;
-use App\Services\Attachment\Img\Img;
 use Atomino2\Util\Geometry\Dimension;
 use Atomino2\Util\Geometry\Point;
 use Atomino2\Util\Geometry\Rectangle;
+use Atomino2\Attachment\Constants\TableLink;
+use Atomino2\Attachment\Constants\TableStorage;
+use Atomino2\Attachment\Img\Img;
 
 
 /**

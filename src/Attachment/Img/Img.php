@@ -1,6 +1,6 @@
-<?php namespace App\Services\Attachment\Img;
+<?php namespace Atomino2\Attachment\Img;
 
-use App\Services\Attachment\Attachment;
+use Atomino2\Attachment\Attachment;
 
 /**
  * @property string $png

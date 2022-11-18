@@ -1,4 +1,4 @@
-<?php namespace App\Services\Attachment\Constants;
+<?php namespace Atomino2\Attachment\Constants;
 interface TableLink {
 	const ID            = 'id';
 	const COLLECTION_ID = 'collectionId';

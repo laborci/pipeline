@@ -1,8 +1,5 @@
-<?php namespace App\Services\Attachment;
+<?php namespace Atomino2\Attachment;
 
-use App\Services\Attachment\Constants\TableLink;
-use App\Services\Attachment\Constants\TableStorage;
-use App\Services\Attachment\Img\ImgFactory;
 use Atomino2\Carbonite\Entity;
 use Atomino2\Carbonite\Event\OnDelete;
 use Atomino2\Database\Connection;
@@ -10,6 +7,9 @@ use Atomino2\Database\SmartSQL\SQL;
 use Atomino2\Util\Geometry\Dimension;
 use Atomino2\Util\Geometry\Transform;
 use Cocur\Slugify\Slugify;
+use Atomino2\Attachment\Constants\TableLink;
+use Atomino2\Attachment\Constants\TableStorage;
+use Atomino2\Attachment\Img\ImgFactory;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;

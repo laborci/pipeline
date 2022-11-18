@@ -1,4 +1,4 @@
-<?php namespace App\Services\Attachment\Img;
+<?php namespace Atomino2\Attachment\Img;
 
 use Atomino2\Util\Geometry\Transform;
 

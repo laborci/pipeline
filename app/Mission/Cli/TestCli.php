@@ -1,17 +1,13 @@
 <?php namespace App\Mission\Cli;
 
 use App\Carbonite\Store\UserStore;
-use App\Carbonite\User;
-use App\Services\Attachment\AttachmentException;
-use App\Services\Attachment\Storage;
 use Atomino2\Cli\CliCommand;
 use Atomino2\Cli\CliModule;
 use Atomino2\Cli\Command;
 use Atomino2\Cli\Style;
-use Atomino2\Database\SmartSQL\Select\Filter;
+use Atomino2\Attachment\Storage;
 use Symfony\Component\Console\Input\Input;
 use Symfony\Component\Console\Output\Output;
-use Symfony\Component\HttpFoundation\File\File;
 
 class TestCli extends CliModule {
 

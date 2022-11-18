@@ -1,7 +1,7 @@
-<?php namespace App\Services\Attachment;
+<?php namespace Atomino2\Attachment;
 
-use App\Services\Attachment\Constants\TableStorage;
 use Atomino2\Util\Geometry\Dimension;
+use Atomino2\Attachment\Constants\TableStorage;
 use Symfony\Component\HttpFoundation\File\File;
 
 class StoredFile extends File {

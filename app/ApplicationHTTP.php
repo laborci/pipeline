@@ -1,8 +1,6 @@
 <?php namespace App;
 
 use App\Mission\MissionRouter;
-use App\Services\Attachment\Img\ImgFileResolver;
-use App\Services\Attachment\StoredFileResolver;
 use Atomino2\Application\ApplicationInterface;
 use Atomino2\Mercury\FileServer\FileServer;
 use Atomino2\Mercury\HttpRequestLogger;
@@ -11,6 +9,8 @@ use Atomino2\Mercury\Middleware\CatchException;
 use Atomino2\Mercury\Middleware\Emitter;
 use Atomino2\Mercury\Middleware\Measure;
 use Atomino2\Mercury\Pipeline\PipeLine;
+use Atomino2\Attachment\Img\ImgFileResolver;
+use Atomino2\Attachment\StoredFileResolver;
 use Symfony\Component\HttpFoundation\Request;
 
 class ApplicationHTTP implements ApplicationInterface {
